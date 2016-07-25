@@ -1,5 +1,4 @@
 require_relative 'display_board'
-system 'clear' or system 'cls'
 
 class GamePlay
 	attr_reader :title
@@ -11,31 +10,43 @@ class GamePlay
   ╚═╝╩ ╩╚═╝╚═╝╚═╝
 
 eos
-		
-		puts @title
 	end
 
 	def start
 		@game = DisplayBoard.new
 		@game.set_defaults
 		
-		fake_move
+		clear_screen
+		show_title
+		some_move
 		show_cell_info
 		show_updated_board
 	end
 
-	def fake_move
-		@game.board.move_piece("d2", "d3")
-		#puts @game.board
+	def show_title
+		puts @title
 	end
 
-	def show_cell_info
-		@game.board.display_info("h8")
+	def clear_screen
+		system 'clear' or system 'cls'
 	end
 
 	def show_updated_board
 		@game.print_board
 	end
+
+	# begin test methods
+	def some_move
+		@game.board.move_piece("d2", "d3")
+		@game.board.move_piece("g8", "f6")
+	end
+
+	def show_cell_info
+		@game.board.display_info("a8")
+	end
+	# end test methods
+
+
 end
 
 game = GamePlay.new
