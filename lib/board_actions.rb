@@ -26,8 +26,11 @@ class BoardActions
 	end
 
 	def place_piece(spot_on_board, piece)
+		color = (spot_on_board =~ /[7-8]/) ? :black : :white
 		spot_on_board = "@" + spot_on_board
-		instance_variable_get(spot_on_board).data[:input] = piece
+
+		instance_variable_get(spot_on_board).data[:piece] = piece[:name]
+		instance_variable_get(spot_on_board).data[:input] = piece[color]
 	end
 
 	def move_piece(from, to)
@@ -36,5 +39,10 @@ class BoardActions
 
 		instance_variable_get(to).data[:input]   = instance_variable_get(from).data[:input]
 		instance_variable_get(from).data[:input] = empty_cell
+	end
+
+	def display_info(spot_on_board)
+		spot_on_board = "@" + spot_on_board
+		p instance_variable_get(spot_on_board)
 	end
 end

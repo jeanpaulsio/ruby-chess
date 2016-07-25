@@ -3,6 +3,7 @@ class Cell
 
 	def initialize(bg_color, col, row)
 		@data = {input: "  ",
+			       piece: nil,
 						    bg: bg_color,
 					     col: col,
 					     row: row
