@@ -3,10 +3,9 @@ class Cell
 
 	def initialize(bg_color, col, row)
 		@data = {input: "  ",
-						 text: :light_black,
-						   bg: bg_color,
-					    col: col,
-					    row: row
-					 }
+						    bg: bg_color,
+					     col: col,
+					     row: row
+					  }
 	end
 end
