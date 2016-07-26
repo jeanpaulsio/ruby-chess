@@ -18,8 +18,10 @@ eos
 		
 		clear_screen
 		show_title
+
 		some_move
 		show_cell_info
+
 		show_updated_board
 	end
 
@@ -35,14 +37,16 @@ eos
 		@game.print_board
 	end
 
+
+
+
 	# begin test methods
 	def some_move
-		@game.board.move_piece("d2", "d3")
-		@game.board.move_piece("g8", "f6")
+		@game.board.move_piece("e2", "e4")
 	end
 
 	def show_cell_info
-		@game.board.display_info("a8")
+		@game.board.display_info("h2")
 	end
 	# end test methods
 

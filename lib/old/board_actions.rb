@@ -8,6 +8,7 @@ class BoardActions
 		@empty_cell  = "  "
 	end
 
+	# method colors dark cell
 	def find_cell_color(col, row)
 		:black if col.even? && row.even? || col.odd? && row.odd?
 	end
@@ -26,26 +27,31 @@ class BoardActions
 		arr
 	end
 
-	def place_piece(spot_on_board, piece)
-		color = (spot_on_board =~ /[7-8]/) ? :black : :white
-		spot_on_board = "@" + spot_on_board
+	def place_piece(destination, piece)
+		color = (destination =~ /[7-8]/) ? :black : :white
+		
+		destination = "@" + destination
+		cell = instance_variable_get(destination)
 
-		instance_variable_get(spot_on_board).data[:player_color] = color.to_s
-		instance_variable_get(spot_on_board).data[:piece]        = piece[:name]
-		instance_variable_get(spot_on_board).data[:input]        = piece[color]
+		cell.data[:player_color] = color.to_s
+		cell.data[:piece]        = piece[:name]
+		cell.data[:input]        = piece[color]
 	end
 
 	def move_piece(from, to)
 		from = "@" + from
 		to   = "@" + to
 
-		instance_variable_get(to).data[:player_color]   = instance_variable_get(from).data[:player_color]
-		instance_variable_get(to).data[:piece]          = instance_variable_get(from).data[:piece]
-		instance_variable_get(to).data[:input]          = instance_variable_get(from).data[:input]
+		origin      = instance_variable_get(to)
+		destination = instance_variable_get(from)
 		
-		instance_variable_get(from).data[:input], 
-		instance_variable_get(from).data[:piece],
-		instance_variable_get(from).data[:player_color] = empty_cell
+		origin.data[:player_color] = destination.data[:player_color]
+		origin.data[:piece]        = destination.data[:piece]
+		origin.data[:input]        = destination.data[:input]
+		
+		destination.data[:input], 
+		destination.data[:piece],
+		destination.data[:player_color] = empty_cell
 	end
 
 	def display_info(spot_on_board)
