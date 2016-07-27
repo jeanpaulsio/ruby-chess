@@ -65,10 +65,10 @@ describe Rook do
 		context "when given two coordinates" do
 			let(:origin)      { {x:1, y:1} }
 			let(:destination) { {x:1, y:6} }
-			let(:set1)        { [ { :coordinates=>{:x=>1, :y=>7} },
-  												  { :coordinates=>{:x=>2, :y=>8} } ] }
-			let(:set2)        { [ { :coordinates=>{:x=>1, :y=>5} },
-  												  { :coordinates=>{:x=>2, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {:x=>1, :y=>7} },
+  												  { coordinates: {:x=>2, :y=>8} } ] }
+			let(:set2)        { [ { coordinates: {:x=>1, :y=>5} },
+  												  { coordinates: {:x=>2, :y=>8} } ] }
 			it "returns true if path is clear" do
   			actual = rook.clear_vertical_path?(origin, destination, set1)
 				expect(actual).to be true
@@ -86,10 +86,10 @@ describe Rook do
 		context "when given two coordinates" do
 			let(:origin)      { {x:1, y:8} }
 			let(:destination) { {x:4, y:8} }
-			let(:set1)        { [ { :coordinates=>{:x=>5, :y=>8} },
-  												  { :coordinates=>{:x=>7, :y=>8} } ] }
-			let(:set2)        { [ { :coordinates=>{:x=>3, :y=>8} },
-  												  { :coordinates=>{:x=>2, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {:x=>5, :y=>8} },
+  												  { coordinates: {:x=>7, :y=>8} } ] }
+			let(:set2)        { [ { coordinates: {:x=>3, :y=>8} },
+  												  { coordinates: {:x=>4, :y=>8} } ] }
 			it "returns true if path is clear" do
   			actual = rook.clear_horizontal_path?(origin, destination, set1)
 				expect(actual).to be true
@@ -102,4 +102,27 @@ describe Rook do
 		end
 	end
 
+	describe "#capture_piece?" do
+		context "when player moves to oponent's square" do
+			let(:origin)      { {x:1, y:8} }
+			let(:destination) { {x:4, y:8} }
+			let(:pieces)      { [ { color: "white", coordinates: {:x=>1, :y=>8} },
+  												  { color: "black", coordinates: {:x=>4, :y=>8} } ] }
+			it "captures opponents piece" do
+				expect(rook.capture_piece?(origin, destination, pieces)).to be true
+			end
+		end
+	end
+
+	describe "#friendly_fire?" do
+		context "when player moves to own square" do
+			let(:origin)      { {x:1, y:8} }
+			let(:destination) { {x:4, y:8} }
+			let(:pieces)      { [ { color: "white", coordinates: {:x=>1, :y=>8} },
+  												  { color: "white", coordinates: {:x=>4, :y=>8} } ] }
+			it "returns true" do
+				expect(rook.friendly_fire?(origin, destination, pieces)).to be true
+			end
+		end
+	end
 end

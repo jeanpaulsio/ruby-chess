@@ -11,6 +11,10 @@ class Rook
 		origin[:y] == destination[:y]
 	end
 
+	def invalid_move?
+		true
+	end
+
 	def vertical_slope?(origin, destination)
 		origin[:x] == destination[:x]
 	end
@@ -33,5 +37,19 @@ class Rook
 
 		y_values = all_pieces.select { |piece| piece[:coordinates][:y] == y1 }
 		!y_values.any? { |piece| (x1...x2).include? piece[:coordinates][:x] }
+	end
+
+	def capture_piece?(origin, destination, all_pieces)
+		coord1 = all_pieces.select { |piece| piece[:coordinates] == origin }
+		coord2 = all_pieces.select { |piece| piece[:coordinates] == destination }
+
+		coord1[0][:color] != coord2[0][:color]
+	end
+
+	def friendly_fire?(origin, destination, all_pieces)
+		coord1 = all_pieces.select { |piece| piece[:coordinates] == origin }
+		coord2 = all_pieces.select { |piece| piece[:coordinates] == destination }
+
+		coord1[0][:color] == coord2[0][:color]
 	end
 end
