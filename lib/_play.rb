@@ -1,6 +1,7 @@
 require_relative '_board'
 require_relative '_game_pieces'
 require_relative 'rook'
+require_relative 'bishop'
 
 system 'clear' or system 'cls'
 
@@ -10,10 +11,10 @@ class Play
 		@game   = Board.new
 		@pieces = GamePieces.new
 		
-		delete_piece_at( {x:2, y:7} )
-		do_some_stuff( {x:2, y:2}, {x:2, y:1} )
+		#delete_piece_at( {x:2, y:7} )
+		#move_piece( {x:2, y:2}, {x:2, y:1} )
 		
-		show_all_pieces
+		#show_all_pieces
 		fill_board
 		print_board
 
@@ -57,7 +58,7 @@ class Play
 	end
 
 
-	def do_some_stuff(origin, destination)
+	def move_piece(origin, destination)
 		a = pieces_array.select do |pieces| 
 			pieces[:coordinates] == origin			#origin coordinates
 		end

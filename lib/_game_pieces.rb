@@ -11,9 +11,16 @@ class GamePieces
 	def initialize
 		@black_rook1   = Rook.new(2, 7, "black")
 		@black_rook2   = Rook.new(7, 7, "black")
+		@black_bishop1 = Bishop.new(3, 8, "black")
+		@black_bishop2 = Bishop.new(6, 8, "black")
+
 		@white_rook1   = Rook.new(2, 2, "white")
 		@white_rook2   = Rook.new(7, 2, "white")
-		@all_symbols   = [@black_rook1, @black_rook2, @white_rook1, @white_rook2]
+		@white_bishop1 = Bishop.new(3, 1, "white")
+		@white_bishop2 = Bishop.new(6, 1, "white")		
+
+		@all_symbols   = [@black_rook1, @black_rook2, @white_rook1, @white_rook2,
+											@black_bishop1, @black_bishop2, @white_bishop1, @white_bishop2]
 =begin
 		@black_rook1   = Rook.new(1, 8, "black")
 		@black_rook2   = Rook.new(8, 8, "black")
