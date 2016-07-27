@@ -31,20 +31,21 @@ class Board
 		board.each_with_index do |row, row_index|
 			puts ""
 			print row[row_index][:y].to_s + " "
+			
 			row.each_with_index do |cell, cell_index|
 				color = cell_color(cell)
 				print cell[:input].colorize(:background => color)
 			end
+
 		end
 		puts "\n  a b c d e f g h"
 	end
 
-	def set_default(coord, name)
-		x = coord[:x] - 1
-		y = coord[:y] - 1
+	def set_piece_coordinates(name)
+		x, y = (name[:coordinates][:x] - 1), (name[:coordinates][:y] - 1)
 		x, y = y, x
 
-		board[x][y][:input] = name.data[:symbol]
+		board[x][y][:input] = name[:symbol]
 	end
 
 end

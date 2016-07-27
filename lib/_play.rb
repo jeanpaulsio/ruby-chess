@@ -8,34 +8,50 @@ class Play
 		@game   = Board.new
 		@pieces = GamePieces.new
 
-		do_some_stuff({x:2, y:1}, {x:3, y:3})
+
+		
+		#delete_piece_at( {x:5, y:2} )
+		do_some_stuff( {x:2, y:1}, {x:2, y:5} )
+		show_all_pieces
 		fill_board
+		print_board
 	end
 
 	def fill_board
 		@game.fill_cells
 		
-		@pieces.white_symbols.each do |i| 
-			@game.set_default(i.data[:coordinates], i)
+		@pieces.all_symbols.each do |piece| 
+			@game.set_piece_coordinates(piece.data)
 		end
-		@pieces.black_symbols.each do |i| 
-			@game.set_default(i.data[:coordinates], i)
-		end
-
-		print_board
 	end
 
 	def print_board
 		@game.print_board
 	end
 
+
+
+
 	def do_some_stuff(origin, destination)
-		a = @pieces.white_symbols.select do |pieces| 
+		a = @pieces.all_symbols.select do |pieces| 
 			pieces.data[:coordinates] == origin			#origin coordinates
 		end
 
-		a[0].data[:coordinates] = destination  #destination coordinates
+		a[0].data[:coordinates] = destination     #destination coordinates
 
+	end
+
+	def delete_piece_at(coord)
+		@pieces.all_symbols.delete_if do |piece|
+			piece.data[:coordinates] == coord
+		end
+	end
+
+	def show_all_pieces
+		# shows pieces
+		@pieces.all_symbols.each do |i|
+			puts i.data[:color]
+		end
 	end
 end
 

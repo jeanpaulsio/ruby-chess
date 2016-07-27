@@ -6,7 +6,7 @@ require_relative 'king'
 require_relative 'pawn'
 
 class GamePieces
-	attr_accessor :black_symbols, :white_symbols
+	attr_accessor :black_symbols, :white_symbols, :all_symbols
 
 	def initialize
 		@black_rook1   = Rook.new(1, 8, "black")
@@ -52,5 +52,7 @@ class GamePieces
 											@white_bishop1, @white_bishop2, @white_queen, @white_king,
 											@white_pawn1, @white_pawn2, @white_pawn3, @white_pawn4,
 											@white_pawn5, @white_pawn6, @white_pawn7, @white_pawn8]
+
+		@all_symbols   = @black_symbols + @white_symbols 
 	end
 end
