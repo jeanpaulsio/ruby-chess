@@ -9,6 +9,12 @@ class GamePieces
 	attr_accessor :black_symbols, :white_symbols, :all_symbols
 
 	def initialize
+		@black_rook1   = Rook.new(2, 7, "black")
+		@black_rook2   = Rook.new(7, 7, "black")
+		@white_rook1   = Rook.new(2, 2, "white")
+		@white_rook2   = Rook.new(7, 2, "white")
+		@all_symbols   = [@black_rook1, @black_rook2, @white_rook1, @white_rook2]
+=begin
 		@black_rook1   = Rook.new(1, 8, "black")
 		@black_rook2   = Rook.new(8, 8, "black")
 		@black_knight1 = Knight.new(2, 8, "black")
@@ -53,6 +59,7 @@ class GamePieces
 											@white_pawn1, @white_pawn2, @white_pawn3, @white_pawn4,
 											@white_pawn5, @white_pawn6, @white_pawn7, @white_pawn8]
 
-		@all_symbols   = @black_symbols + @white_symbols 
+		@all_symbols   = @black_symbols + @white_symbols
+=end
 	end
 end

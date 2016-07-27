@@ -1,27 +1,35 @@
 require_relative '_board'
 require_relative '_game_pieces'
+require_relative 'rook'
 
 system 'clear' or system 'cls'
 
 class Play
+
 	def initialize
 		@game   = Board.new
 		@pieces = GamePieces.new
-
-
 		
-		#delete_piece_at( {x:5, y:2} )
-		do_some_stuff( {x:2, y:1}, {x:2, y:5} )
+		delete_piece_at( {x:2, y:7} )
+		do_some_stuff( {x:2, y:2}, {x:2, y:1} )
+		
 		show_all_pieces
 		fill_board
 		print_board
+
+		find_piece_symbol( {x:7, y:2} )
+	end
+
+	def pieces_array
+		ans = @pieces.all_symbols.map{|i|i.data}
+		ans
 	end
 
 	def fill_board
 		@game.fill_cells
 		
 		@pieces.all_symbols.each do |piece| 
-			@game.set_piece_coordinates(piece.data)
+		@game.set_piece_coordinates(piece.data)
 		end
 	end
 
@@ -29,16 +37,32 @@ class Play
 		@game.print_board
 	end
 
+	def find_piece_symbol(origin)
+		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
+		check_moves(target[0])
+	end
 
+
+
+	def check_moves(symbol)
+		#puts symbol.valid_move?({x:4,y:1},{x:4,y:5})
+		#puts symbol.vertical_slope?({x:8,y:1},{x:8,y:7})
+
+		puts symbol.clear_vertical_path?({x:2,y:7},{x:7,y:7}, pieces_array)
+		puts symbol.clear_horizontal_path?({x:3,y:7},{x:6,y:7}, pieces_array)
+		#puts symbol.capture_piece?({x:2,y:7},{x:7,y:7}, pieces_array)
+		#puts symbol.capture_piece?({x:2,y:7},{x:2,y:1}, pieces_array)
+	  #puts symbol.friendly_fire?({x:2,y:7},{x:7,y:7}, pieces_array)
+		#puts symbol.friendly_fire?({x:2,y:7},{x:2,y:1}, pieces_array)
+	end
 
 
 	def do_some_stuff(origin, destination)
-		a = @pieces.all_symbols.select do |pieces| 
-			pieces.data[:coordinates] == origin			#origin coordinates
+		a = pieces_array.select do |pieces| 
+			pieces[:coordinates] == origin			#origin coordinates
 		end
 
-		a[0].data[:coordinates] = destination     #destination coordinates
-
+		a[0][:coordinates] = destination     #destination coordinates
 	end
 
 	def delete_piece_at(coord)
@@ -49,8 +73,8 @@ class Play
 
 	def show_all_pieces
 		# shows pieces
-		@pieces.all_symbols.each do |i|
-			puts i.data[:color]
+		pieces_array.each do |i|
+			puts i[:name]
 		end
 	end
 end

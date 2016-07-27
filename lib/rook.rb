@@ -25,18 +25,22 @@ class Rook
 
 	def clear_vertical_path?(origin, destination, all_pieces)
 		x1, x2 = origin[:x], destination[:x]
-		y1, y2 = origin[:y], destination[:y]
+		y1     = origin[:y] < destination[:y] ? origin[:y] : destination[:y]
+		y2     = origin[:y] < destination[:y] ? destination[:y] : origin[:y]
+		y1    += 1
 
 		x_values = all_pieces.select { |piece| piece[:coordinates][:x] == x1 }
-		!x_values.any? { |piece| (y1...y2).include? piece[:coordinates][:y] }
+		x_values.none? { |piece| ((y1...y2).include? piece[:coordinates][:y]) }
 	end
 
 	def clear_horizontal_path?(origin, destination, all_pieces)
-		x1, x2 = origin[:x], destination[:x]
 		y1, y2 = origin[:y], destination[:y]
+		x1     = origin[:x] < destination[:x] ? origin[:x] : destination[:x]
+		x2     = origin[:x] < destination[:x] ? destination[:x] : origin[:x]
+		x1    += 1
 
 		y_values = all_pieces.select { |piece| piece[:coordinates][:y] == y1 }
-		!y_values.any? { |piece| (x1...x2).include? piece[:coordinates][:x] }
+		y_values.none? { |piece| ((x1...x2).include? piece[:coordinates][:x]) }
 	end
 
 	def capture_piece?(origin, destination, all_pieces)
