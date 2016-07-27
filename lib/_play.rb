@@ -11,14 +11,13 @@ class Play
 		@game   = Board.new
 		@pieces = GamePieces.new
 		
+		#identify_piece_symbol( {x:6, y:1} )
 		#delete_piece_at( {x:2, y:7} )
-		#move_piece( {x:2, y:2}, {x:2, y:1} )
+		move_piece( {x:2, y:2}, {x:2, y:4} )
 		
 		#show_all_pieces
 		fill_board
 		print_board
-
-		find_piece_symbol( {x:7, y:2} )
 	end
 
 	def pieces_array
@@ -38,9 +37,10 @@ class Play
 		@game.print_board
 	end
 
-	def find_piece_symbol(origin)
+	def identify_piece_symbol(origin)
 		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
-		check_moves(target[0])
+		#check_moves(target[0])
+		puts target[0].data[:name]
 	end
 
 

@@ -7,6 +7,10 @@ class Bishop
 	end
 
 	def valid_move?(origin, destination)
-		false
+		y2, y1 = destination[:y], origin[:y]
+		x2, x1 = destination[:x], origin[:x]
+
+		(y2 - y1)/(x2 - x1) ==  1 || 
+		(y2 - y1)/(x2 - x1) == -1
 	end
 end
