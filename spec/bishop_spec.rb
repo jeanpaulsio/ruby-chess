@@ -51,11 +51,53 @@ describe Bishop do
 		end
   end
 
+  describe "#bounding_box" do
+  	context "when given (x1,y1) and (x2,y2)" do
+ 			let(:origin)      { {x:3, y:2} }
+			let(:destination) { {x:6, y:5} }
+			let(:set1)        { [ { coordinates: {x:4, y:4} },
+  												  { coordinates: {x:6, y:2} },
+  												  { coordinates: {x:1, y:2} } ] }
+
+  		it "returns coordinates on board within box area of coordinates" do
+  			actual = bishop.bounding_box(origin, destination, set1)
+  			expect(actual).to eq( [{ coordinates: {x:4, y:4} },
+  												     { coordinates: {x:6, y:2} } ] )
+  		end
+  	end
+  end
+
   describe "#clear_positive_slope?" do
-  	pending
+  	context "when given values within square area" do
+ 			let(:origin)      { {x:3, y:2} }
+			let(:set1)        { [ { coordinates: {x:4, y:4} },
+  												  { coordinates: {x:6, y:2} } ] }
+			let(:set2)        { [ { coordinates: {x:4, y:3} },
+  												  { coordinates: {x:6, y:2} } ] }
+
+  		it "returns true if clear path between origin and destination" do
+  			with_set1 = bishop.clear_positive_slope?(origin, set1)
+  			with_set2 = bishop.clear_positive_slope?(origin, set2)
+  			expect(with_set1).to be true
+  			expect(with_set2).to be false
+  		end
+  	end
   end
 
   describe "#clear_negative_slope?" do
-  	pending
+  	context "when given values within square area" do
+ 			let(:origin)      { {x:3, y:5} }
+			let(:set1)        { [ { coordinates: {x:3, y:3} },
+  												  { coordinates: {x:6, y:4} } ] }
+			let(:set2)        { [ { coordinates: {x:4, y:3} },
+  												  { coordinates: {x:6, y:2} } ] }
+
+  		it "returns true if clear path between origin and destination" do
+  			with_set1 = bishop.clear_negative_slope?(origin, set1)
+  			with_set2 = bishop.clear_negative_slope?(origin, set2)
+  			expect(with_set1).to be true
+  			expect(with_set2).to be false
+  		end
+  	end
   end
 end

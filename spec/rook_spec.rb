@@ -40,10 +40,10 @@ describe Rook do
 		context "when moving downward on the board" do
 			let(:origin)      { {x:1, y:6} }
 			let(:destination) { {x:1, y:1} }
-			let(:set1)        { [ { coordinates: {:x=>1, :y=>7} },
-  												  { coordinates: {:x=>2, :y=>8} } ] }
-			let(:set2)        { [ { coordinates: {:x=>1, :y=>5} },
-  												  { coordinates: {:x=>2, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {x:1, y:7} },
+  												  { coordinates: {x:2, y:8} } ] }
+			let(:set2)        { [ { coordinates: {x:1, y:5} },
+  												  { coordinates: {x:2, y:8} } ] }
 			it "returns true if path is clear" do
   			actual = rook.clear_vertical_path?(origin, destination, set1)
 				expect(actual).to be true
@@ -57,10 +57,10 @@ describe Rook do
 		context "when moving upward on the board" do
 			let(:origin)      { {x:1, y:1} }
 			let(:destination) { {x:1, y:7} }
-			let(:set1)        { [ { coordinates: {:x=>1, :y=>7} },
-  												  { coordinates: {:x=>2, :y=>8} } ] }
-			let(:set2)        { [ { coordinates: {:x=>1, :y=>5} },
-  												  { coordinates: {:x=>2, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {x:1, y:7} },
+  												  { coordinates: {x:2, y:8} } ] }
+			let(:set2)        { [ { coordinates: {x:1, y:5} },
+  												  { coordinates: {x:2, y:8} } ] }
   		it "returns true if path is clear" do
   			actual = rook.clear_vertical_path?(origin, destination, set1)
 				expect(actual).to be true
@@ -78,10 +78,10 @@ describe Rook do
 		context "when moving left to right" do
 			let(:origin)      { {x:1, y:8} }
 			let(:destination) { {x:4, y:8} }
-			let(:set1)        { [ { coordinates: {:x=>5, :y=>8} },
-  												  { coordinates: {:x=>7, :y=>8} } ] }
-			let(:set2)        { [ { coordinates: {:x=>3, :y=>8} },
-  												  { coordinates: {:x=>4, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {x:5, y:8} },
+  												  { coordinates: {x:7, y:8} } ] }
+			let(:set2)        { [ { coordinates: {x:3, y:8} },
+  												  { coordinates: {x:4, y:8} } ] }
 			it "returns true if path is clear" do
   			actual = rook.clear_horizontal_path?(origin, destination, set1)
 				expect(actual).to be true
@@ -95,10 +95,10 @@ describe Rook do
 		context "when moving right to left" do
 			let(:origin)      { {x:4, y:8} }
 			let(:destination) { {x:1, y:8} }
-			let(:set1)        { [ { coordinates: {:x=>5, :y=>8} },
-  												  { coordinates: {:x=>7, :y=>8} } ] }
-			let(:set2)        { [ { coordinates: {:x=>3, :y=>8} },
-  												  { coordinates: {:x=>4, :y=>8} } ] }
+			let(:set1)        { [ { coordinates: {x:5, y:8} },
+  												  { coordinates: {x:7, y:8} } ] }
+			let(:set2)        { [ { coordinates: {x:3, y:8} },
+  												  { coordinates: {x:4, y:8} } ] }
 			it "returns true if path is clear" do
   			actual = rook.clear_horizontal_path?(origin, destination, set1)
 				expect(actual).to be true
