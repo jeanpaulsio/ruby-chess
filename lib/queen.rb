@@ -1,4 +1,6 @@
-class Queen
+require_relative 'basic_moves'
+
+class Queen < BasicMoves
 	attr_reader :data
 	
 	def initialize(x, y, color)
@@ -7,6 +9,9 @@ class Queen
 	end
 
 	def valid_move?(origin, destination)
-		false
+		#positive_slope? || 
+		#negative_slope? ||
+		#vertical_slope? || 
+		#horizontal_slope?
 	end
 end
