@@ -1,9 +1,9 @@
-require './lib/rook'
-require './lib/knight'
-require './lib/bishop'
-require './lib/queen'
-require './lib/king'
-require './lib/pawn'
+require './lib/pieces/rook'
+require './lib/pieces/knight'
+require './lib/pieces/bishop'
+require './lib/pieces/queen'
+require './lib/pieces/king'
+require './lib/pieces/pawn'
 
 class GamePieces
 	attr_accessor :black_symbols, :white_symbols, :all_symbols

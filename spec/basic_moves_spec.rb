@@ -1,5 +1,5 @@
-require 'bishop'
-require 'rook'
+require './lib/pieces/bishop'
+require './lib/pieces/rook'
 system 'clear' or system 'cls'
 
 describe Bishop do

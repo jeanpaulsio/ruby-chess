@@ -1,4 +1,4 @@
-require 'piece_actions'
+require './lib/pieces/piece_actions'
 system 'clear' or system 'cls'
 
 describe PieceActions do

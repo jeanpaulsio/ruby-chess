@@ -1,7 +1,7 @@
 require_relative 'board'
 require_relative 'game_pieces'
-require './lib/rook'
-require './lib/bishop'
+require './lib/pieces/rook'
+require './lib/pieces/bishop'
 
 system 'clear' or system 'cls'
 
