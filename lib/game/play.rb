@@ -1,7 +1,7 @@
-require_relative '_board'
-require_relative '_game_pieces'
-require_relative 'rook'
-require_relative 'bishop'
+require_relative 'board'
+require_relative 'game_pieces'
+require './lib/rook'
+require './lib/bishop'
 
 system 'clear' or system 'cls'
 

@@ -1,9 +1,9 @@
-require_relative 'rook'
-require_relative 'knight'
-require_relative 'bishop'
-require_relative 'queen'
-require_relative 'king'
-require_relative 'pawn'
+require './lib/rook'
+require './lib/knight'
+require './lib/bishop'
+require './lib/queen'
+require './lib/king'
+require './lib/pawn'
 
 class GamePieces
 	attr_accessor :black_symbols, :white_symbols, :all_symbols

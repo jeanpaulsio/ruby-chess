@@ -1,8 +1,8 @@
-require 'piece'
+require 'piece_actions'
 system 'clear' or system 'cls'
 
-describe Piece do
-	subject(:piece) { Piece.new }
+describe PieceActions do
+	subject(:piece) { PieceActions.new }
 
 	describe "#empty_spot?" do
 		context "when destination is empty" do
