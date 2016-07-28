@@ -7,59 +7,12 @@ describe Rook do
 	let(:y)          { 8 }
   let(:color)      { "black" }
 
-	describe "#valid_move?" do
-		context "when given two coodinates with same x-value" do
-			let(:origin)      { {x:1, y:8} }
-			let(:destination) { {x:1, y:4} }
-
-			it "returns true" do
-				expect(rook.valid_move?(origin, destination)).to be true
-			end
-		end
-
-		context "when given two coordinates with same y-value" do
-			let(:origin)      { {x:1, y:8} }
-			let(:destination) { {x:4, y:8} }
-
-			it "returns true" do
-				expect(rook.valid_move?(origin, destination)).to be true
-			end
-		end
-
-		context "when neither x nor y coordinates match" do
-			let(:origin)      { {x:1, y:7} }
-			let(:destination) { {x:4, y:8} }
-
-			it "returns false" do
-				expect(rook.valid_move?(origin, destination)).to be false
-			end
-		end
-	end
-
-	describe "#empty_spot?" do
-		context "when destination is empty" do
-			let(:destination) { {x:4, y:8} }
-			let(:all_pieces)  { [ { coordinates: {:x=>1, :y=>7} },
-  												  { coordinates: {:x=>2, :y=>8} } ]  }
-
-			it "returns true" do
-				expect(rook.empty_spot?(destination, all_pieces)).to be true
-			end
-		end
-
-		context "when destination is occupied" do
-			let(:destination) { {x:4, y:8} }
-			let(:all_pieces)  { [ { coordinates: {:x=>1, :y=>7} },
-  												  { coordinates: {:x=>4, :y=>8} } ]  }
-
-			it "returns true" do
-				expect(rook.empty_spot?(destination, all_pieces)).to be false
-			end
-		end
-	end
+  describe "#valid_move?" do
+  	pending
+  end
 
 	describe "#vertical_slope?" do
-		context "when #valid_move? and x1 = x2" do
+		context "when x1 = x2" do
 			let(:origin)      { {x:1, y:8} }
 			let(:destination) { {x:1, y:4} }
 
@@ -71,7 +24,7 @@ describe Rook do
 	end
 
 	describe "#horizontal_slope" do
-		context "when #valid_move? and y1 = y2" do
+		context "when y1 = y2" do
 			let(:origin)      { {x:1, y:8} }
 			let(:destination) { {x:4, y:8} }
 
@@ -157,27 +110,4 @@ describe Rook do
 		end
 	end
 
-	describe "#capture_piece?" do
-		context "when player moves to oponent's square" do
-			let(:origin)      { {x:1, y:8} }
-			let(:destination) { {x:4, y:8} }
-			let(:pieces)      { [ { color: "white", coordinates: {:x=>1, :y=>8} },
-  												  { color: "black", coordinates: {:x=>4, :y=>8} } ] }
-			it "captures opponents piece" do
-				expect(rook.capture_piece?(origin, destination, pieces)).to be true
-			end
-		end
-	end
-
-	describe "#friendly_fire?" do
-		context "when player moves to own square" do
-			let(:origin)      { {x:1, y:8} }
-			let(:destination) { {x:4, y:8} }
-			let(:pieces)      { [ { color: "white", coordinates: {:x=>1, :y=>8} },
-  												  { color: "white", coordinates: {:x=>4, :y=>8} } ] }
-			it "returns true" do
-				expect(rook.friendly_fire?(origin, destination, pieces)).to be true
-			end
-		end
-	end
 end
