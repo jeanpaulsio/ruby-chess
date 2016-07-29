@@ -13,7 +13,7 @@ class Play
 		
 		#identify_piece_symbol( {x:6, y:1} )
 		#delete_piece_at( {x:2, y:7} )
-		move_piece( {x:2, y:2}, {x:2, y:4} )
+		#move_piece( {x:2, y:2}, {x:2, y:4} )
 		
 		#show_all_pieces
 		fill_board

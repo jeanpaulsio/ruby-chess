@@ -3,7 +3,7 @@ require './lib/pieces/rook'
 system 'clear' or system 'cls'
 
 describe Bishop do
-	subject(:bishop)   { Bishop.new(x, y, color) }
+	subject(:bishop) { Bishop.new(x, y, color) }
 	let(:x)          { 2 }
 	let(:y)          { 8 }
   let(:color)      { "black" }
