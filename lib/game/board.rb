@@ -26,9 +26,13 @@ class Board
 			         (cell[:y].odd?  && cell[:x].odd?))
 	end
 
+	def reverse_board
+		@board.reverse!
+	end
+
 	def print_board
-		board.reverse!
-		board.each_with_index do |row, row_index|
+		@board.reverse!
+		@board.each_with_index do |row, row_index|
 			puts ""
 			print row[row_index][:y].to_s + " "
 			

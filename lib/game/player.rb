@@ -8,7 +8,6 @@ class Player
 	end
 
 	def take_turn
-		puts "» #{color}'s turn:"
 		ans = gets.chomp
 	end
 end
