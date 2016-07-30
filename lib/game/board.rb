@@ -11,11 +11,9 @@ class Board
 	def fill_cells
 		@board = @board.each_with_index.map do |i, y|
 			i.each_with_index.map do |j, x| 
-				{ designation: (y + 1).to_s + "#{(x + 97).chr}",
-		      occupied:    false,
-				  input:       "  ",
-				  x:           x+1,
-				  y:           y+1
+				{ designation: (y + 1).to_s + "#{(x + 97).chr}", 
+				  occupied: false, input: "  ", 
+				  x: x+1, y: y+1
 				} 
 			end
 		end
@@ -31,8 +29,8 @@ class Board
 	end
 
 	def print_board
-		@board.reverse!
-		@board.each_with_index do |row, row_index|
+		board.reverse!
+		board.each_with_index do |row, row_index|
 			puts ""
 			print row[row_index][:y].to_s + " "
 			
@@ -49,7 +47,7 @@ class Board
 		x, y = (name[:coordinates][:x] - 1), (name[:coordinates][:y] - 1)
 		x, y = y, x
 
-		board[x][y][:input] = name[:symbol]
+		board[x][y][:input]    = name[:symbol]
+		board[x][y][:occupied] = true
 	end
-
 end
