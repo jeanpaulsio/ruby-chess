@@ -1,6 +1,6 @@
 class BasicActions
-	def empty_spot?(destination, all_pieces)
-		target = all_pieces.select { |piece| piece[:coordinates] == destination }
+	def empty_spot?(spot, all_pieces)
+		target = all_pieces.select { |piece| piece[:coordinates] == spot }
 		target.empty? ? true : false
 	end
 

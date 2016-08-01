@@ -1,17 +1,23 @@
 require_relative 'board'
 require_relative 'game_pieces'
 require_relative 'player'
-require './lib/pieces/rook'
-require './lib/pieces/bishop'
+require './lib/pieces/basic_actions'
 
 class Play
+	attr_reader :actions
 
 	def initialize
 		@game    = Board.new
 		@pieces  = GamePieces.new
 		@player1 = Player.new("white")
 		@player2 = Player.new("black")
-		
+		@actions = BasicActions.new
+		@title = <<-eos
+╔═╗╦ ╦╔═╗╔═╗╔═╗
+║  ╠═╣║╣ ╚═╗╚═╗
+╚═╝╩ ╩╚═╝╚═╝╚═╝
+		eos
+
 		play_game(@player1)
 	end
 
@@ -26,13 +32,58 @@ class Play
 			error_message
 			play_game(player)
 		else
-			ans = ans[0].split("")
-			x1, y1 = (ans[0].ord  - 96), ans[1].to_i
-			x2, y2 = (ans[-2].ord - 96), ans[-1].to_i
+			make_move(ans, player)
 		end
 		
-		move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
 		switch_players(player)
+	end
+
+	def make_move(user_input, player)
+		user_input       = user_input[0].split("")
+		x1, y1           = (user_input[0].ord  - 96), user_input[1].to_i
+		x2, y2           = (user_input[-2].ord - 96), user_input[-1].to_i
+		piece            = find_piece_at({ x:x1, y:y1 })
+		spot_is_empty    = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
+		origin_is_empty  = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
+		
+		if origin_is_empty
+			error_message
+			play_game(player)
+		elsif piece.valid_move?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array) && (player.color == piece.data[:color])
+			if spot_is_empty
+				piece.data[:move_count] += 1
+				move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
+			elsif !spot_is_empty
+				friendly_fire = actions.friendly_fire?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array)
+				attack        = actions.capture_piece?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array)
+
+				if friendly_fire
+					error_message
+					play_game(player)
+				elsif attack
+					captured_piece = find_piece_at( {x:x2, y:y2} )
+					capture_message(captured_piece)
+
+					delete_piece_at( {x:x2, y:y2} )
+
+					piece.data[:move_count] += 1					
+					move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
+				end
+			end
+		else
+			error_message
+			play_game(player)
+		end
+		
+	end
+
+	def display_board
+		pause
+		clear_screen
+		fill_board
+		puts @title
+		print_board
+		reverse_board
 	end
 
 	def pieces_array
@@ -57,13 +108,6 @@ class Play
 		@game.reverse_board
 	end
 
-	def display_board
-		clear_screen
-		fill_board
-		print_board
-		reverse_board
-	end
-
 	def pause
 		sleep 0.5
 	end
@@ -73,19 +117,30 @@ class Play
 		pause
 	end
 
+	def capture_message(captured_piece)
+		puts "#{captured_piece.data[:color].capitalize}'s #{captured_piece.data[:name]} has been captured!"
+	end
+
 	def switch_players(player)
 		player = player == @player1 ? @player2 : @player1
 		play_game(player)
 	end
-
-
-	### test shit
 
 	def move_piece(origin, destination)
 		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
 		target[0].data[:coordinates] = destination
 	end
 
+	def delete_piece_at(coord)
+ 		@pieces.all_symbols.delete_if do |piece|
+ 			piece.data[:coordinates] == coord
+ 		end
+ 	end
+
+	def find_piece_at(origin)
+		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
+		target[0]
+	end
 end
 
 game = Play.new

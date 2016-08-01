@@ -4,10 +4,6 @@ system 'clear' or system 'cls'
 describe Knight do
 	subject(:knight) { Knight.new(2, 1, "black") }
 
-	describe "#valid_move?" do
-  	pending
-  end
-
   describe "#slope_is_two?" do
   	context "when slope between two points is positive two" do
 			let(:origin)      { {x:2, y:1} }

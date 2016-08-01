@@ -10,9 +10,6 @@ describe Bishop do
 
   # check to see if slope == -1 || 1
   # (y2 - y1) / (x2 - x1)
-  describe "#valid_move?" do
-  	pending
-  end
   
   describe "#positive_slope?" do
   	context "when traversing upward on positive slope" do
@@ -108,10 +105,6 @@ describe Rook do
 	let(:x)          { 1 }
 	let(:y)          { 8 }
   let(:color)      { "black" }
-
-  describe "#valid_move?" do
-  	pending
-  end
 
 	describe "#vertical_slope?" do
 		context "when x1 = x2" do

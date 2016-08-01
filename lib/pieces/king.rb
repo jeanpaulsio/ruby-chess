@@ -3,10 +3,10 @@ class King
 	
 	def initialize(x, y, color)
 		symbol = color == "white" ? "♔ " : "♚ "
-		@data = { name: "king", color: color, symbol: symbol, coordinates: {x: x, y: y} }
+		@data = { name: "king", color: color, symbol: symbol, coordinates: {x: x, y: y}, move_count: 0 }
 	end
 
-	def valid_move?(origin, destination)
+	def valid_move?(origin, destination, all_pieces=[])
 		y2, y1 = destination[:y], origin[:y]
 		x2, x1 = destination[:x], origin[:x]
 

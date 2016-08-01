@@ -31,14 +31,16 @@ class BasicMoves
 		y2, y1 = destination[:y], origin[:y]
 		x2, x1 = destination[:x], origin[:x]
 
-		(y2 - y1)/(x2 - x1) ==  1
+		return false if x2 == x1
+		(y2 - y1)/(x2 - x1.to_f) ==  1
 	end
 
 	def negative_slope?(origin, destination)
 		y2, y1 = destination[:y], origin[:y]
 		x2, x1 = destination[:x], origin[:x]
 
-		(y2 - y1)/(x2 - x1) == -1
+		return false if x2 == x1
+		(y2 - y1)/(x2 - x1.to_f) == -1
 	end
 
 	def bounding_box(origin, destination, all_pieces)
