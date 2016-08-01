@@ -37,4 +37,8 @@ class Pawn
 		target = all_pieces.select { |piece| piece[:coordinates] == destination }
 		target.empty? ? true : false
 	end
+
+	def en_passant
+		
+	end
 end

@@ -17,6 +17,7 @@ class Play
 ║  ╠═╣║╣ ╚═╗╚═╗
 ╚═╝╩ ╩╚═╝╚═╝╚═╝
 		eos
+		@instructions = "Player move example: c2 to c4"
 
 		play_game(@player1)
 	end
@@ -24,7 +25,7 @@ class Play
 	def play_game(player)
 		display_board
 
-		puts "» #{player.color.capitalize}'s turn:"
+		puts "\n» #{player.color.capitalize}'s turn:"
 		ans = player.take_turn
 		ans = ans.scan(/[a-h][1-8] to [a-h][1-8]/)
 
@@ -42,25 +43,21 @@ class Play
 		user_input       = user_input[0].split("")
 		x1, y1           = (user_input[0].ord  - 96), user_input[1].to_i
 		x2, y2           = (user_input[-2].ord - 96), user_input[-1].to_i
+		
 		piece            = find_piece_at({ x:x1, y:y1 })
 		spot_is_empty    = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
 		origin_is_empty  = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
 		
 		if origin_is_empty
-			error_message
-			play_game(player)
+			error_message(player)
+			
 		elsif piece.valid_move?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array) && (player.color == piece.data[:color])
-			if spot_is_empty
-				piece.data[:move_count] += 1
-				move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
-			elsif !spot_is_empty
+			unless spot_is_empty
 				friendly_fire = actions.friendly_fire?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array)
-				attack        = actions.capture_piece?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array)
 
 				if friendly_fire
-					error_message
-					play_game(player)
-				elsif attack
+					error_message(player)
+				else
 					captured_piece = find_piece_at( {x:x2, y:y2} )
 					capture_message(captured_piece)
 
@@ -69,10 +66,14 @@ class Play
 					piece.data[:move_count] += 1					
 					move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
 				end
+
+			else
+				piece.data[:move_count] += 1
+				move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
 			end
+
 		else
-			error_message
-			play_game(player)
+			error_message(player)
 		end
 		
 	end
@@ -82,6 +83,7 @@ class Play
 		clear_screen
 		fill_board
 		puts @title
+		puts @instructions
 		print_board
 		reverse_board
 	end
@@ -112,8 +114,9 @@ class Play
 		sleep 0.5
 	end
 
-	def error_message
+	def error_message(player)
 		puts "Nice try, big guy"
+		play_game(player)
 		pause
 	end
 
