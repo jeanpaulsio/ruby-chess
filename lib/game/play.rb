@@ -31,9 +31,8 @@ class Play
 			play_game(player)
 		else
 			make_move(ans, player)
+			switch_players(player)
 		end
-		
-		switch_players(player)
 	end
 
 	def make_move(user_input, player)
@@ -43,9 +42,9 @@ class Play
 		origin               = { x:x1, y:y1 }
 		destination          = { x:x2, y:y2 }
 
-		piece                = find_piece_at({ x:x1, y:y1 })
-		origin_is_empty      = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
-		destination_is_empty = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
+		piece                = find_piece_at(origin)
+		origin_is_empty      = actions.empty_spot?(origin, pieces_array)
+		destination_is_empty = actions.empty_spot?(destination, pieces_array)
 
 		error_message(player) if origin_is_empty
 
@@ -56,19 +55,16 @@ class Play
 				move_piece(origin, destination)
 				piece.data[:move_count] += 1
 				player.total_moves += 1
+			elsif actions.friendly_fire?(origin, destination, pieces_array)
+				friendly_fire_message(player)
 			else
-				if actions.friendly_fire?(origin, destination, pieces_array)
-					puts "No Friendly Fire!"
-					error_message(player)
-				else
-					captured_piece = find_piece_at(destination)
-					capture_message(captured_piece)
-					delete_piece_at(destination)
-					
-					move_piece(origin, destination)
-					piece.data[:move_count] += 1
-					player.total_moves += 1
-				end
+				captured_piece = find_piece_at(destination)
+				capture_message(captured_piece)
+				delete_piece_at(destination)
+				
+				move_piece(origin, destination)
+				piece.data[:move_count] += 1
+				player.total_moves += 1
 			end
 		
 		else
@@ -117,9 +113,14 @@ class Play
 	end
 
 	def error_message(player)
-		puts "Nice try, big guy"
+		puts "Don't ever play yourself."
 		play_game(player)
 		pause
+	end
+
+	def friendly_fire_message(player)
+		puts "No Friendly Fire!"
+		error_message(player)
 	end
 
 	def capture_message(captured_piece)
@@ -148,4 +149,4 @@ class Play
 	end
 end
 
-game = Play.new
+Play.new
