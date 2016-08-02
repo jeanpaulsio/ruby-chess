@@ -17,7 +17,13 @@ class Play
 ║  ╠═╣║╣ ╚═╗╚═╗
 ╚═╝╩ ╩╚═╝╚═╝╚═╝
 		eos
-		@instructions = "Player move example: c2 to c4"
+		@instructions = <<-eos
+» Welcome to Ruby Chess
+» Player 1 is White
+» Player 2 is Black
+» Players move their piece like this:
+    a2 to a4
+		eos
 
 		play_game(@player1)
 	end
@@ -43,39 +49,51 @@ class Play
 		user_input       = user_input[0].split("")
 		x1, y1           = (user_input[0].ord  - 96), user_input[1].to_i
 		x2, y2           = (user_input[-2].ord - 96), user_input[-1].to_i
-		
+		origin           = { x:x1, y:y1 }
+		destination      = { x:x2, y:y2 }
+
 		piece            = find_piece_at({ x:x1, y:y1 })
 		spot_is_empty    = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
 		origin_is_empty  = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
-		
+
+		# error if player calls on empty square
 		if origin_is_empty
 			error_message(player)
 			
-		elsif piece.valid_move?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array) && (player.color == piece.data[:color])
-			unless spot_is_empty
-				friendly_fire = actions.friendly_fire?({ x:x1, y:y1 }, { x:x2, y:y2 }, pieces_array)
-
-				if friendly_fire
+		# checks validation if player moves their own piece
+		elsif piece.valid_move?(origin, destination, pieces_array) && (player.color == piece.data[:color])
+			
+			if spot_is_empty
+				move_piece(origin, destination)
+				
+				piece.data[:move_count] += 1
+				player.total_moves += 1
+			else
+				if actions.friendly_fire?(origin, destination, pieces_array)
 					error_message(player)
 				else
-					captured_piece = find_piece_at( {x:x2, y:y2} )
+					captured_piece = find_piece_at(destination)
 					capture_message(captured_piece)
 
-					delete_piece_at( {x:x2, y:y2} )
-
-					piece.data[:move_count] += 1					
-					move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
+					delete_piece_at(destination)
+					move_piece(origin, destination)
+					
+					piece.data[:move_count] += 1
+					player.total_moves += 1
 				end
-
-			else
-				piece.data[:move_count] += 1
-				move_piece({ x:x1, y:y1 }, { x:x2, y:y2 })
 			end
 
+		# returns error if piece's move is not valid
 		else
 			error_message(player)
 		end
-		
+	end
+
+	def en_passant?(origin)
+		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
+		target[0].data[:enpassant] = (target[0].data[:move_count] == 1) ? true : false
+
+		return target[0].data[:enpassant]
 	end
 
 	def display_board
