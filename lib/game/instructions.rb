@@ -13,10 +13,9 @@ class Instructions
     a2 to a4
     d7 to d5
 » Special move examples: 
-    castle e8 to c8
-    caslte e8 to g8
-    castle e1 to g1
-    castle e1 to c1
+    e8 to c8 castle
+    b5 to c6 en passant
+    d7 to d8 promotion
 » Need to implement:
     - en passant
     - castling

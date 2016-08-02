@@ -24,11 +24,26 @@ class Play
 
 		puts "\n» #{player.color.capitalize}'s turn:"
 		ans = player.take_turn
-		ans = ans.scan(/[a-h][1-8] to [a-h][1-8]/)
+		ans = ans.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
 
 		if ans.empty?
 			error_message
 			play_game(player)
+		elsif ans.include? "castle"
+			puts "TODO: implement castle"
+			make_move(ans, player)
+			switch_players(player)
+		
+		elsif ans.include? "en passant"
+			puts "TODO: implement en passant"
+			make_move(ans, player)
+			switch_players(player)
+		
+		elsif ans.include? "promotion"
+			puts "TODO: implement promotion"
+			make_move(ans, player)
+			switch_players(player)
+		
 		else
 			make_move(ans, player)
 			switch_players(player)
