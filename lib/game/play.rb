@@ -37,54 +37,44 @@ class Play
 	end
 
 	def make_move(user_input, player)
-		user_input       = user_input[0].split("")
-		x1, y1           = (user_input[0].ord  - 96), user_input[1].to_i
-		x2, y2           = (user_input[-2].ord - 96), user_input[-1].to_i
-		origin           = { x:x1, y:y1 }
-		destination      = { x:x2, y:y2 }
+		user_input           = user_input[0].split("")
+		x1, y1               = (user_input[0].ord  - 96), user_input[1].to_i
+		x2, y2               = (user_input[-2].ord - 96), user_input[-1].to_i
+		origin               = { x:x1, y:y1 }
+		destination          = { x:x2, y:y2 }
 
-		piece            = find_piece_at({ x:x1, y:y1 })
-		spot_is_empty    = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
-		origin_is_empty  = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
+		piece                = find_piece_at({ x:x1, y:y1 })
+		origin_is_empty      = actions.empty_spot?({ x:x1, y:y1 }, pieces_array)
+		destination_is_empty = actions.empty_spot?({ x:x2, y:y2 }, pieces_array)
 
-		# error if player calls on empty square
-		if origin_is_empty
-			error_message(player)
+		error_message(player) if origin_is_empty
+
+		if piece.valid_move?(origin, destination, pieces_array) && 
+			 player.color == piece.data[:color]
 			
-		# checks validation if player moves their own piece
-		elsif piece.valid_move?(origin, destination, pieces_array) && (player.color == piece.data[:color])
-			
-			if spot_is_empty
+			if destination_is_empty
 				move_piece(origin, destination)
-				
 				piece.data[:move_count] += 1
 				player.total_moves += 1
 			else
 				if actions.friendly_fire?(origin, destination, pieces_array)
+					puts "No Friendly Fire!"
 					error_message(player)
 				else
 					captured_piece = find_piece_at(destination)
 					capture_message(captured_piece)
-
 					delete_piece_at(destination)
-					move_piece(origin, destination)
 					
+					move_piece(origin, destination)
 					piece.data[:move_count] += 1
 					player.total_moves += 1
 				end
 			end
-
-		# returns error if piece's move is not valid
+		
 		else
 			error_message(player)
 		end
-	end
 
-	def en_passant?(origin)
-		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
-		target[0].data[:enpassant] = (target[0].data[:move_count] == 1) ? true : false
-
-		return target[0].data[:enpassant]
 	end
 
 	def display_board
@@ -99,6 +89,10 @@ class Play
 	def pieces_array
 		ans = @pieces.all_symbols.map{|i|i.data}
 		ans
+	end
+
+	def pause
+		sleep 0.5
 	end
 
 	def clear_screen
@@ -120,10 +114,6 @@ class Play
 
 	def reverse_board
 		@game.reverse_board
-	end
-
-	def pause
-		sleep 0.5
 	end
 
 	def error_message(player)
