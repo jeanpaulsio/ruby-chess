@@ -1,29 +1,20 @@
-require_relative 'board'
-require_relative 'game_pieces'
 require_relative 'player'
+require_relative 'board'
+require_relative 'instructions'
+require_relative 'game_pieces'
+
 require './lib/pieces/basic_actions'
 
 class Play
 	attr_reader :actions
 
 	def initialize
-		@game    = Board.new
-		@pieces  = GamePieces.new
-		@player1 = Player.new("white")
-		@player2 = Player.new("black")
-		@actions = BasicActions.new
-		@title = <<-eos
-╔═╗╦ ╦╔═╗╔═╗╔═╗
-║  ╠═╣║╣ ╚═╗╚═╗
-╚═╝╩ ╩╚═╝╚═╝╚═╝
-		eos
-		@instructions = <<-eos
-» Welcome to Ruby Chess
-» Player 1 is White
-» Player 2 is Black
-» Players move their piece like this:
-    a2 to a4
-		eos
+		@game         = Board.new
+		@pieces       = GamePieces.new
+		@player1      = Player.new("white")
+		@player2      = Player.new("black")
+		@actions      = BasicActions.new
+		@instructions = Instructions.new
 
 		play_game(@player1)
 	end
@@ -100,8 +91,7 @@ class Play
 		pause
 		clear_screen
 		fill_board
-		puts @title
-		puts @instructions
+		show_instructions
 		print_board
 		reverse_board
 	end
@@ -118,6 +108,10 @@ class Play
 	def fill_board
 		@game.fill_cells
 		@pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
+	end
+
+	def show_instructions
+		@instructions.display
 	end
 
 	def print_board
