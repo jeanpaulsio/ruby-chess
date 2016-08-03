@@ -8,165 +8,165 @@ require './lib/pieces/basic_actions'
 require './lib/pieces/special_moves'
 
 class Play
-	attr_reader :actions, :advantage
+  attr_reader :actions, :advantage
 
-	def initialize
-		@game         = Board.new
-		@pieces       = GamePieces.new
-		@player1      = Player.new("white")
-		@player2      = Player.new("black")
-		@actions      = BasicActions.new
-		@advantage    = Advantage.new
-		@instructions = Instructions.new
+  def initialize
+    @game         = Board.new
+    @pieces       = GamePieces.new
+    @player1      = Player.new("white")
+    @player2      = Player.new("black")
+    @actions      = BasicActions.new
+    @advantage    = Advantage.new
+    @instructions = Instructions.new
 
-		play_game(@player1)
-	end
+    play_game(@player1)
+  end
 
-	def play_game(player)
-		display_board
+  def play_game(player)
+    display_board
 
-		puts "\n» #{player.color.capitalize}'s turn:"
-		ans = player.take_turn
-		ans = ans.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
+    puts "\n» #{player.color.capitalize}'s turn:"
+    ans = player.take_turn
+    ans = ans.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
 
-		if ans.empty?
-			error_message
-			play_game(player)
-		else
-			make_move(ans, player)
+    if ans.empty?
+      error_message
+      play_game(player)
+    else
+      make_move(ans, player)
 
-			check_advantage(player)
+      check_advantage(player)
 
-			switch_players(player)
-		end
-	end
+      switch_players(player)
+    end
+  end
 
-	def check_advantage(player)
-		advantage.check?(player, white_pieces, black_pieces)
-	end
+  def check_advantage(player)
+    advantage.check?(player, white_pieces, black_pieces)
+  end
 
-	def make_move(user_input, player)
-		user_input           = user_input[0].split("")
-		x1, y1               = (user_input[0].ord  - 96), user_input[1].to_i
-		x2, y2               = (user_input[-2].ord - 96), user_input[-1].to_i
-		origin               = { x:x1, y:y1 }
-		destination          = { x:x2, y:y2 }
+  def make_move(user_input, player)
+    user_input           = user_input[0].split("")
+    x1, y1               = (user_input[0].ord  - 96), user_input[1].to_i
+    x2, y2               = (user_input[-2].ord - 96), user_input[-1].to_i
+    origin               = { x:x1, y:y1 }
+    destination          = { x:x2, y:y2 }
 
-		piece                = find_piece_at(origin)
-		origin_is_empty      = actions.empty_spot?(origin, all_pieces)
-		destination_is_empty = actions.empty_spot?(destination, all_pieces)
+    piece                = find_piece_at(origin)
+    origin_is_empty      = actions.empty_spot?(origin, all_pieces)
+    destination_is_empty = actions.empty_spot?(destination, all_pieces)
 
-		error_message(player) if origin_is_empty
+    error_message(player) if origin_is_empty
 
-		if piece.valid_move?(origin, destination, all_pieces) && 
-			 player.color == piece.data[:color]
-			
-			if destination_is_empty
-				move_piece(origin, destination)
-				piece.data[:move_count] += 1
-				player.total_moves += 1
-			elsif actions.friendly_fire?(origin, destination, all_pieces)
-				friendly_fire_message(player)
-			else
-				captured_piece = find_piece_at(destination)
-				capture_message(captured_piece)
-				delete_piece_at(destination)
-				
-				move_piece(origin, destination)
-				piece.data[:move_count] += 1
-				player.total_moves += 1
-			end
-		
-		else
-			error_message(player)
-		end
+    if piece.valid_move?(origin, destination, all_pieces) && 
+       player.color == piece.data[:color]
+      
+      if destination_is_empty
+        move_piece(origin, destination)
+        piece.data[:move_count] += 1
+        player.total_moves += 1
+      elsif actions.friendly_fire?(origin, destination, all_pieces)
+        friendly_fire_message(player)
+      else
+        captured_piece = find_piece_at(destination)
+        capture_message(captured_piece)
+        delete_piece_at(destination)
+        
+        move_piece(origin, destination)
+        piece.data[:move_count] += 1
+        player.total_moves += 1
+      end
+    
+    else
+      error_message(player)
+    end
 
-	end
+  end
 
-	def display_board
-		#pause
-		#clear_screen
-		fill_board
-		show_instructions
-		print_board
-		reverse_board
-	end
+  def display_board
+    #pause
+    #clear_screen
+    fill_board
+    show_instructions
+    print_board
+    reverse_board
+  end
 
-	def all_pieces
-		ans = @pieces.all_symbols.map{ |i| i.data }
-		ans
-	end
+  def all_pieces
+    ans = @pieces.all_symbols.map{ |i| i.data }
+    ans
+  end
 
-	def black_pieces
-		ans = @pieces.black_symbols.map{ |i| i.data }
-		ans
-	end
+  def black_pieces
+    ans = @pieces.black_symbols.map{ |i| i.data }
+    ans
+  end
 
-	def white_pieces
-		ans = @pieces.white_symbols.map{ |i| i.data }
-		ans
-	end
+  def white_pieces
+    ans = @pieces.white_symbols.map{ |i| i.data }
+    ans
+  end
 
-	def pause
-		sleep 0.5
-	end
+  def pause
+    sleep 0.5
+  end
 
-	def clear_screen
-		system 'clear' or system 'cls'
-	end
+  def clear_screen
+    system 'clear' or system 'cls'
+  end
 
-	def fill_board
-		@game.fill_cells
-		@pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
-	end
+  def fill_board
+    @game.fill_cells
+    @pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
+  end
 
-	def show_instructions
-		@instructions.display
-	end
+  def show_instructions
+    @instructions.display
+  end
 
-	def print_board
-		@game.print_board
-	end
+  def print_board
+    @game.print_board
+  end
 
-	def reverse_board
-		@game.reverse_board
-	end
+  def reverse_board
+    @game.reverse_board
+  end
 
-	def error_message(player)
-		puts "Don't ever play yourself."
-		play_game(player)
-		pause
-	end
+  def error_message(player)
+    puts "Don't ever play yourself."
+    play_game(player)
+    pause
+  end
 
-	def friendly_fire_message(player)
-		puts "No Friendly Fire!"
-		error_message(player)
-	end
+  def friendly_fire_message(player)
+    puts "No Friendly Fire!"
+    error_message(player)
+  end
 
-	def capture_message(captured_piece)
-		puts "#{captured_piece.data[:color].capitalize}'s #{captured_piece.data[:name]} has been captured!"
-	end
+  def capture_message(captured_piece)
+    puts "#{captured_piece.data[:color].capitalize}'s #{captured_piece.data[:name]} has been captured!"
+  end
 
-	def switch_players(player)
-		player = player == @player1 ? @player2 : @player1
-		play_game(player)
-	end
+  def switch_players(player)
+    player = player == @player1 ? @player2 : @player1
+    play_game(player)
+  end
 
-	def move_piece(origin, destination)
-		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
-		target[0].data[:coordinates] = destination
-	end
+  def move_piece(origin, destination)
+    target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
+    target[0].data[:coordinates] = destination
+  end
 
-	def delete_piece_at(coord)
- 		@pieces.all_symbols.delete_if do |piece|
- 			piece.data[:coordinates] == coord
- 		end
- 	end
+  def delete_piece_at(coord)
+    @pieces.all_symbols.delete_if do |piece|
+      piece.data[:coordinates] == coord
+    end
+  end
 
-	def find_piece_at(origin)
-		target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
-		target[0]
-	end
+  def find_piece_at(origin)
+    target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
+    target[0]
+  end
 end
 
 Play.new
