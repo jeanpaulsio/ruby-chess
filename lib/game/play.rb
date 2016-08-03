@@ -2,11 +2,13 @@ require_relative 'player'
 require_relative 'board'
 require_relative 'instructions'
 require_relative 'game_pieces'
+require_relative 'advantage'          # check, checkmate, stalemate
 
 require './lib/pieces/basic_actions'
+require './lib/pieces/special_moves'
 
 class Play
-	attr_reader :actions
+	attr_reader :actions, :advantage
 
 	def initialize
 		@game         = Board.new
@@ -14,6 +16,7 @@ class Play
 		@player1      = Player.new("white")
 		@player2      = Player.new("black")
 		@actions      = BasicActions.new
+		@advantage    = Advantage.new
 		@instructions = Instructions.new
 
 		play_game(@player1)
@@ -29,25 +32,17 @@ class Play
 		if ans.empty?
 			error_message
 			play_game(player)
-		elsif ans.include? "castle"
-			puts "TODO: implement castle"
-			make_move(ans, player)
-			switch_players(player)
-		
-		elsif ans.include? "en passant"
-			puts "TODO: implement en passant"
-			make_move(ans, player)
-			switch_players(player)
-		
-		elsif ans.include? "promotion"
-			puts "TODO: implement promotion"
-			make_move(ans, player)
-			switch_players(player)
-		
 		else
 			make_move(ans, player)
+
+			check_advantage(player)
+
 			switch_players(player)
 		end
+	end
+
+	def check_advantage(player)
+		advantage.check?(player, white_pieces, black_pieces)
 	end
 
 	def make_move(user_input, player)
@@ -58,19 +53,19 @@ class Play
 		destination          = { x:x2, y:y2 }
 
 		piece                = find_piece_at(origin)
-		origin_is_empty      = actions.empty_spot?(origin, pieces_array)
-		destination_is_empty = actions.empty_spot?(destination, pieces_array)
+		origin_is_empty      = actions.empty_spot?(origin, all_pieces)
+		destination_is_empty = actions.empty_spot?(destination, all_pieces)
 
 		error_message(player) if origin_is_empty
 
-		if piece.valid_move?(origin, destination, pieces_array) && 
+		if piece.valid_move?(origin, destination, all_pieces) && 
 			 player.color == piece.data[:color]
 			
 			if destination_is_empty
 				move_piece(origin, destination)
 				piece.data[:move_count] += 1
 				player.total_moves += 1
-			elsif actions.friendly_fire?(origin, destination, pieces_array)
+			elsif actions.friendly_fire?(origin, destination, all_pieces)
 				friendly_fire_message(player)
 			else
 				captured_piece = find_piece_at(destination)
@@ -89,16 +84,26 @@ class Play
 	end
 
 	def display_board
-		pause
-		clear_screen
+		#pause
+		#clear_screen
 		fill_board
 		show_instructions
 		print_board
 		reverse_board
 	end
 
-	def pieces_array
-		ans = @pieces.all_symbols.map{|i|i.data}
+	def all_pieces
+		ans = @pieces.all_symbols.map{ |i| i.data }
+		ans
+	end
+
+	def black_pieces
+		ans = @pieces.black_symbols.map{ |i| i.data }
+		ans
+	end
+
+	def white_pieces
+		ans = @pieces.white_symbols.map{ |i| i.data }
 		ans
 	end
 
