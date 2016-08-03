@@ -10,12 +10,7 @@ class Board
 
   def fill_cells
     @board = @board.each_with_index.map do |i, y|
-      i.each_with_index.map do |j, x| 
-        { designation: (y + 1).to_s + "#{(x + 97).chr}", 
-          occupied: false, input: "  ", 
-          x: x+1, y: y+1
-        } 
-      end
+      i.each_with_index.map { |j, x| { input: "  ", x: x+1, y: y+1 } }
     end
   end
 
@@ -47,7 +42,6 @@ class Board
     x, y = (name[:coordinates][:x] - 1), (name[:coordinates][:y] - 1)
     x, y = y, x
 
-    board[x][y][:input]    = name[:symbol]
-    board[x][y][:occupied] = true
+    board[x][y][:input] = name[:symbol]
   end
 end

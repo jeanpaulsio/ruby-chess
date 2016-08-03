@@ -14,9 +14,9 @@ class Instructions
           a2 a4
           d7 d5
       » Special move examples: (TODO)
-          e8 c8 castle
-          b5 c6 en passant
-          d7 d8 promotion
+          castle e8 c8 
+          en passant b5 c6 
+          promotion d7 d8 
       eos
   end
 

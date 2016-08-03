@@ -19,11 +19,10 @@
 » Regular move examples: 
     a2 to a4
     d7 to d5
-» Special move examples: 
-    castle e8 to c8
-    caslte e8 to g8
-    castle e1 to g1
-    castle e1 to c1
+» Special move examples: (TODO)
+    castle e8 c8 
+    en passant b5 c6 
+    promotion d7 d8 
 ```
 
 ## Game Board Screenshot
