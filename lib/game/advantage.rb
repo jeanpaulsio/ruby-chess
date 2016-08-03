@@ -10,10 +10,9 @@ class Advantage
     player_is_black = player.color == "black"
     
     if player_is_white
-      puts "white check" if check_if_check(white_pieces, opponent_king_location, all_pieces)
-    
+      puts "Black is in Check" if check_if_check(white_pieces, opponent_king_location, all_pieces)
     elsif player_is_black
-      puts "black check" if check_if_check(black_pieces, opponent_king_location, all_pieces)
+      puts "White is in Check" if check_if_check(black_pieces, opponent_king_location, all_pieces)
     end
   end
 
@@ -37,21 +36,15 @@ class Advantage
     end
   end
 
-  def check_if_check(user_pieces, destination, all_pieces)
+  def check_if_check(player_pieces, destination, all_pieces)
     status = false
-    user_pieces.each do |piece|
+    player_pieces.each do |piece|
       origin = piece.data[:coordinates]
-      status = true if piece.valid_move?(origin, destination, all_pieces)
-    end
-    status
-  end
-
-  def protect_your_king(opponent_pieces, destination, all_pieces)
-    status = false
-      opponent_pieces.each do |piece|
-        origin = piece.data[:coordinates]
-        status = true if piece.valid_move?(origin, destination, all_pieces)
+      if piece.valid_move?(origin, destination, all_pieces)
+        status = true 
+        puts "Check from #{piece.data[:name]} at #{piece.data[:coordinates]}" 
       end
+    end
     status
   end
 

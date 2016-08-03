@@ -28,36 +28,41 @@ class Play
 
     answer      = player.take_turn
     parsed_ans  = scan_answer(answer)
-    user_input  = parsed_ans[0].split("")
-
-    origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
-    destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
-
+    
     if parsed_ans.empty?
-      error_message
+      error_message(player)
       play_game(player)
     else
+      user_input  = parsed_ans[0][0].split('')
+      origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
+      destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
+
       make_move(origin, destination, player)
       switch_players(player)
     end
   end
 
+#######
   def check_advantage(player)
     advantage.check?(player, white_pieces, black_pieces, all_pieces)
   end
 
-  def king_protection(player)
-    player_is_white    = player.color == "white"
-    player_is_black    = player.color == "black"
-
+  def user_king(player)
     user_king          = advantage.find_your_king(player, white_pieces, black_pieces)
     user_king_location = user_king[:coordinates]
+  end
 
-    if player_is_white
-      advantage.protect_your_king(black_pieces, user_king_location, all_pieces)
-    elsif player_is_black
-      advantage.protect_your_king(white_pieces, user_king_location, all_pieces)
-    end
+  def user_pieces(player)
+    player.color == "white" ? white_pieces : black_pieces
+  end
+
+  def opponent_king(player)
+    opponent_king          = advantage.find_opponent_king(player, white_pieces, black_pieces)
+    opponent_king_location = opponent_king[:coordinates]
+  end
+
+  def opponent_pieces(player)
+    player.color == "black" ? white_pieces : black_pieces
   end
 
   def make_move(origin, destination, player)
@@ -67,8 +72,6 @@ class Play
 
     error_message(player) if origin_is_empty
 
-
-
     if piece.valid_move?(origin, destination, all_pieces) && 
        player.color == piece.data[:color]
       
@@ -76,20 +79,48 @@ class Play
         move_piece(origin, destination)
         increase_move_count(piece, player)
         
-        puts "#{player.color}, protect your king!" if king_protection(player)
         check_advantage(player)
+       
+        player_pieces    = opponent_pieces(player)
+        user_king_location = user_king(player)
 
+        #all_pieces.each do |i| puts i end
+        if advantage.check_if_check(player_pieces, user_king_location, all_pieces)
+          
+
+          protect_king_message(player)
+          move_piece(destination, origin)
+          decrease_move_count(piece, player)
+
+          error_message(player)
+        end
+      
+      
+      
+        
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         friendly_fire_message(player)
 
       elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = find_piece_at(destination)
-        capture_message(captured_piece)
         delete_piece_at(destination)
         
         move_piece(origin, destination)
         increase_move_count(piece, player)
 
+        player_pieces      = opponent_pieces(player)
+        user_king_location = user_king(player)
+        if advantage.check_if_check(player_pieces, user_king_location, all_pieces)
+          protect_king_message(player)
+          move_piece(destination, origin)
+          decrease_move_count(piece, player)
+
+          @pieces.all_symbols << captured_piece
+
+          error_message(player)
+        end
+
+        capture_message(captured_piece)
         check_advantage(player)
       end
     
@@ -98,6 +129,7 @@ class Play
     end
 
   end
+#######
 
   def display_board
     #pause
@@ -115,16 +147,14 @@ class Play
 
   def black_pieces
     @pieces.all_symbols.select{ |i| i.data[:color] == "black" }
-    #ans = ans.map{ |i| i.data }
   end
 
   def white_pieces
     @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
-    #ans = ans.map{ |i| i.data }
   end
 
   def pause
-    sleep 0.5
+    sleep 1.5
   end
 
   def clear_screen
@@ -167,8 +197,12 @@ class Play
     puts "\n» #{player.color.capitalize}'s turn:"
   end
 
+  def protect_king_message(player)
+    puts "#{player.color.capitalize}, protect your king!"
+  end
+
   def scan_answer(answer)
-    answer.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
+    answer.scan(/([a-h][1-8]\s[a-h][1-8])$/)
   end
 
   def switch_players(player)
@@ -184,6 +218,11 @@ class Play
   def increase_move_count(piece, player)
     piece.data[:move_count] += 1
     player.total_moves += 1
+  end
+
+  def decrease_move_count(piece, player)
+    piece.data[:move_count] -= 1
+    player.total_moves -= 1
   end
 
   def delete_piece_at(coord)

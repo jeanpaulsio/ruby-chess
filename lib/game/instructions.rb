@@ -11,12 +11,12 @@ class Instructions
     @instructions = <<~eos
       » Welcome to Ruby Chess
       » Regular move examples: 
-          a2 to a4
-          d7 to d5
+          a2 a4
+          d7 d5
       » Special move examples: 
-          e8 to c8 castle
-          b5 to c6 en passant
-          d7 to d8 promotion
+          e8 c8 castle
+          b5 c6 en passant
+          d7 d8 promotion
       eos
   end
 
