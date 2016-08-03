@@ -24,34 +24,30 @@ class Play
 
   def play_game(player)
     display_board
+    turn_message(player)
 
-    puts "\n» #{player.color.capitalize}'s turn:"
-    ans = player.take_turn
-    ans = ans.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
+    answer      = player.take_turn
+    parsed_ans  = scan_answer(answer)
+    user_input  = parsed_ans[0].split("")
 
-    if ans.empty?
+    origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
+    destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
+
+    if parsed_ans.empty?
       error_message
       play_game(player)
     else
-      make_move(ans, player)
-
+      make_move(origin, destination, player)
       check_advantage(player)
-
       switch_players(player)
     end
   end
 
   def check_advantage(player)
-    advantage.check?(player, white_pieces, black_pieces)
+    advantage.check?(player, white_pieces, black_pieces, all_pieces)
   end
 
-  def make_move(user_input, player)
-    user_input           = user_input[0].split("")
-    x1, y1               = (user_input[0].ord  - 96), user_input[1].to_i
-    x2, y2               = (user_input[-2].ord - 96), user_input[-1].to_i
-    origin               = { x:x1, y:y1 }
-    destination          = { x:x2, y:y2 }
-
+  def make_move(origin, destination, player)
     piece                = find_piece_at(origin)
     origin_is_empty      = actions.empty_spot?(origin, all_pieces)
     destination_is_empty = actions.empty_spot?(destination, all_pieces)
@@ -63,22 +59,21 @@ class Play
       
       if destination_is_empty
         move_piece(origin, destination)
-        piece.data[:move_count] += 1
-        player.total_moves += 1
+        increase_move_count(piece, player)
+
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         friendly_fire_message(player)
+        
       elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = find_piece_at(destination)
         capture_message(captured_piece)
         delete_piece_at(destination)
         
         move_piece(origin, destination)
-        piece.data[:move_count] += 1
-        player.total_moves += 1
+        increase_move_count(piece, player)
       end
     
     else
-      puts "move not valid"
       error_message(player)
     end
 
@@ -99,13 +94,13 @@ class Play
   end
 
   def black_pieces
-    ans = @pieces.all_symbols.select{ |i| i.data[:color] == "black" }
-    ans = ans.map{ |i| i.data }
+    @pieces.all_symbols.select{ |i| i.data[:color] == "black" }
+    #ans = ans.map{ |i| i.data }
   end
 
   def white_pieces
-    ans = @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
-    ans = ans.map{ |i| i.data }
+    @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
+    #ans = ans.map{ |i| i.data }
   end
 
   def pause
@@ -148,6 +143,14 @@ class Play
     puts "#{captured_piece.data[:color].capitalize}'s #{captured_piece.data[:name]} has been captured!"
   end
 
+  def turn_message(player)
+    puts "\n» #{player.color.capitalize}'s turn:"
+  end
+
+  def scan_answer(answer)
+    answer.scan(/[a-h][1-8] to [a-h][1-8]|castle?|en passant?|promotion?/)
+  end
+
   def switch_players(player)
     player = player == @player1 ? @player2 : @player1
     play_game(player)
@@ -156,6 +159,11 @@ class Play
   def move_piece(origin, destination)
     target = @pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
     target[0].data[:coordinates] = destination
+  end
+
+  def increase_move_count(piece, player)
+    piece.data[:move_count] += 1
+    player.total_moves += 1
   end
 
   def delete_piece_at(coord)
