@@ -12,8 +12,8 @@ class Board
 		@board = @board.each_with_index.map do |i, y|
 			i.each_with_index.map do |j, x| 
 				{ designation: (y + 1).to_s + "#{(x + 97).chr}", 
-				  occupied: false, input: "  ", 
-				  x: x+1, y: y+1
+					occupied: false, input: "  ", 
+					x: x+1, y: y+1
 				} 
 			end
 		end
@@ -21,8 +21,8 @@ class Board
 
 	def cell_color(cell)
 		:black if ((cell[:y].even? && cell[:x].even?) || 
-			         (cell[:y].odd?  && cell[:x].odd?))
-	end
+							 (cell[:y].odd?  && cell[:x].odd?))
+	end 
 
 	def reverse_board
 		@board.reverse!
