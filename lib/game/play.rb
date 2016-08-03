@@ -67,7 +67,7 @@ class Play
         player.total_moves += 1
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         friendly_fire_message(player)
-      else
+      elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = find_piece_at(destination)
         capture_message(captured_piece)
         delete_piece_at(destination)
@@ -78,6 +78,7 @@ class Play
       end
     
     else
+      puts "move not valid"
       error_message(player)
     end
 
@@ -98,13 +99,13 @@ class Play
   end
 
   def black_pieces
-    ans = @pieces.black_symbols.map{ |i| i.data }
-    ans
+    ans = @pieces.all_symbols.select{ |i| i.data[:color] == "black" }
+    ans = ans.map{ |i| i.data }
   end
 
   def white_pieces
-    ans = @pieces.white_symbols.map{ |i| i.data }
-    ans
+    ans = @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
+    ans = ans.map{ |i| i.data }
   end
 
   def pause

@@ -12,7 +12,7 @@ class Bishop < BasicMoves
     bounded = bounding_box(origin, destination, all_pieces)
 
     positive_slope?(origin, destination) || negative_slope?(origin, destination) &&
-    ( (clear_positive_slope?(origin, bounded) && positive_slope?(origin, destination)) || 
-      (clear_negative_slope?(origin, bounded) && negative_slope?(origin, destination)) )
+    ( (clear_positive_slope?(origin, destination, bounded) && positive_slope?(origin, destination)) || 
+      (clear_negative_slope?(origin, destination, bounded) && negative_slope?(origin, destination)) )
   end
 end

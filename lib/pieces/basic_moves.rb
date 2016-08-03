@@ -55,19 +55,23 @@ class BasicMoves
     end
   end
 
-  def clear_positive_slope?(origin, bounded_values)
-    x1, y1 = origin[:x].to_f, origin[:y].to_f
+  def clear_positive_slope?(origin, destination, bounded_values)
+    x1, y1 = origin[:x], origin[:y]
+
+    bounded_values.delete_if { |i| i[:coordinates] == destination }
 
     bounded_values.none? do |i| 
-      ((i[:coordinates][:y] - y1)/(i[:coordinates][:x] - x1)) == 1
+      ((i[:coordinates][:y] - y1)/(i[:coordinates][:x] - x1.to_f)) == 1
     end
   end
 
-  def clear_negative_slope?(origin, bounded_values)
-    x1, y1 = origin[:x].to_f, origin[:y].to_f
+  def clear_negative_slope?(origin, destination, bounded_values)
+    x1, y1 = origin[:x], origin[:y]
+    
+    bounded_values.delete_if { |i| i[:coordinates] == destination }
     
     bounded_values.none? do |i| 
-      ((i[:coordinates][:y] - y1)/(i[:coordinates][:x] - x1)) == -1
+      ((i[:coordinates][:y] - y1)/(i[:coordinates][:x] - x1.to_f)) == -1
     end
   end
 end
