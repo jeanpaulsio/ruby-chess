@@ -38,7 +38,6 @@ class Play
       play_game(player)
     else
       make_move(origin, destination, player)
-      check_advantage(player)
       switch_players(player)
     end
   end
@@ -60,10 +59,12 @@ class Play
       if destination_is_empty
         move_piece(origin, destination)
         increase_move_count(piece, player)
+        
+        check_advantage(player)
 
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         friendly_fire_message(player)
-        
+
       elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = find_piece_at(destination)
         capture_message(captured_piece)
@@ -71,11 +72,15 @@ class Play
         
         move_piece(origin, destination)
         increase_move_count(piece, player)
+
+        check_advantage(player)
       end
     
     else
       error_message(player)
     end
+
+
 
   end
 
