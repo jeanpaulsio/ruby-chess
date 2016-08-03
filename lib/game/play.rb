@@ -46,12 +46,28 @@ class Play
     advantage.check?(player, white_pieces, black_pieces, all_pieces)
   end
 
+  def king_protection(player)
+    player_is_white    = player.color == "white"
+    player_is_black    = player.color == "black"
+
+    user_king          = advantage.find_your_king(player, white_pieces, black_pieces)
+    user_king_location = user_king[:coordinates]
+
+    if player_is_white
+      advantage.protect_your_king(black_pieces, user_king_location, all_pieces)
+    elsif player_is_black
+      advantage.protect_your_king(white_pieces, user_king_location, all_pieces)
+    end
+  end
+
   def make_move(origin, destination, player)
     piece                = find_piece_at(origin)
     origin_is_empty      = actions.empty_spot?(origin, all_pieces)
     destination_is_empty = actions.empty_spot?(destination, all_pieces)
 
     error_message(player) if origin_is_empty
+
+
 
     if piece.valid_move?(origin, destination, all_pieces) && 
        player.color == piece.data[:color]
@@ -60,6 +76,7 @@ class Play
         move_piece(origin, destination)
         increase_move_count(piece, player)
         
+        puts "#{player.color}, protect your king!" if king_protection(player)
         check_advantage(player)
 
       elsif actions.friendly_fire?(origin, destination, all_pieces)
@@ -79,8 +96,6 @@ class Play
     else
       error_message(player)
     end
-
-
 
   end
 

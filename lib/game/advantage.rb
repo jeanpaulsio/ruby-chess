@@ -10,13 +10,10 @@ class Advantage
     player_is_black = player.color == "black"
     
     if player_is_white
-      check_if_check(white_pieces, opponent_king_location, all_pieces)
-      puts "white in check" if protect_your_king(black_pieces, user_king_location, all_pieces)
+      puts "white check" if check_if_check(white_pieces, opponent_king_location, all_pieces)
     
     elsif player_is_black
-      check_if_check(black_pieces, opponent_king_location, all_pieces)
-      puts "black in check" if protect_your_king(white_pieces, user_king_location, all_pieces)
-
+      puts "black check" if check_if_check(black_pieces, opponent_king_location, all_pieces)
     end
   end
 
