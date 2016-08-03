@@ -9,9 +9,9 @@ class Bishop < BasicMoves
   end
 
   def valid_move?(origin, destination, all_pieces)
+    status  = false
     bounded = bounding_box(origin, destination, all_pieces)
-
-    status = false
+    
     if positive_slope?(origin, destination)
       status = clear_positive_slope?(origin, destination, bounded) ? true : false
     elsif negative_slope?(origin, destination)
@@ -21,6 +21,5 @@ class Bishop < BasicMoves
     end
 
     status
-
   end
 end

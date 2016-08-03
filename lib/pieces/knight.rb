@@ -7,9 +7,9 @@ class Knight
   end
 
   def valid_move?(origin, destination, all_pieces=[])
-    (slope_is_two?(origin, destination) || 
-    slope_is_one_half?(origin, destination)) &&
-    valid_distance?(origin, destination)
+    ( slope_is_two?(origin, destination) || 
+      slope_is_one_half?(origin, destination) ) &&
+      valid_distance?(origin, destination)
   end
 
   def slope_is_two?(origin, destination)

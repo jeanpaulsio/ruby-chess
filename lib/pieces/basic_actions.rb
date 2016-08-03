@@ -4,10 +4,6 @@ class BasicActions
     target.empty? ? true : false
   end
 
-  def invalid_move?
-    true
-  end
-
   def capture_piece?(origin, destination, all_pieces)
     coord1 = all_pieces.select { |piece| piece[:coordinates] == origin }
     coord2 = all_pieces.select { |piece| piece[:coordinates] == destination }

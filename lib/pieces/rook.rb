@@ -10,9 +10,16 @@ class Rook < BasicMoves
   end
 
   def valid_move?(origin, destination, all_pieces)
-    ( horizontal_slope?(origin, destination) && 
-        clear_horizontal_path?(origin, destination, all_pieces) ) || 
-    ( vertical_slope?(origin, destination) &&
-        clear_vertical_path?(origin, destination, all_pieces) )
+    status = false
+
+    if horizontal_slope?(origin, destination)
+      status = clear_horizontal_path?(origin, destination, all_pieces) ? true : false
+    elsif vertical_slope?(origin, destination)
+      status = clear_vertical_path?(origin, destination, all_pieces) ? true : false
+    else
+      status
+    end
+
+    status
   end
 end

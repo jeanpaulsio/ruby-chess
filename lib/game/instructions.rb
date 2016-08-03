@@ -13,7 +13,7 @@ class Instructions
       » Regular move examples: 
           a2 a4
           d7 d5
-      » Special move examples: 
+      » Special move examples: (TODO)
           e8 c8 castle
           b5 c6 en passant
           d7 d8 promotion
