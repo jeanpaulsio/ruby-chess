@@ -21,6 +21,6 @@ class Messages
   end
 
   def check(player)
-    puts player.color == "white" ? "Black in Check" : "White in Check"
+    puts player.color == "white" ? "(Black in Check)" : "(White in Check)"
   end
 end

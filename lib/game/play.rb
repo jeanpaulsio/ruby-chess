@@ -24,6 +24,7 @@ class Play
     @instructions = Instructions.new
     @messages     = Messages.new
 
+    show_instructions
     play_game(@player1)
   end
 
@@ -60,9 +61,9 @@ class Play
         actions.move_piece(origin, destination, pieces)
         actions.increase_move_count(piece, player)
         
-        opponent_in_check?(player)
+        
         king_protection(origin, destination, piece, player)
-  
+        opponent_in_check?(player)
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         messages.friendly_fire(player)
         error_loop(player)
@@ -125,10 +126,10 @@ class Play
 
   # ----- methods related to interface display ----- #
   def display_board
-    pause
-    clear_screen
+    #pause
+    #clear_screen
     fill_board
-    show_instructions
+    #show_instructions
     print_board
     reverse_board
   end

@@ -2,10 +2,10 @@ class Pawn
   attr_reader :data
   
   def initialize(x, y, color)
-    symbol = color == "white" ? "♙ " : "♟ "
+    symbol = color == "white" ? "  ♙   " : "  ♟   "
     @data = { name: "pawn", color: color, symbol: symbol, 
               coordinates: {x: x, y: y}, move_count: 0, 
-              enpassant: false }
+              enpassant: false, check: false }
   end
 
   def valid_move?(origin, destination, all_pieces)
