@@ -56,7 +56,7 @@ class Play
        player.color == piece.data[:color]
       
       if actions.empty_spot?(destination, all_pieces)
-        actions.move_piece(origin, destination, pieces)
+        actions.move_piece(origin, destination, all_pieces)
         actions.increase_move_count(piece, player)  
         
         king_protection(origin, destination, piece, player)
@@ -69,7 +69,7 @@ class Play
         captured_piece = actions.find_piece(destination, pieces)
         actions.delete_piece(destination, pieces)
 
-        actions.move_piece(origin, destination, pieces)
+        actions.move_piece(origin, destination, all_pieces)
         actions.increase_move_count(piece, player)
 
         king_protection(origin, destination, piece, player, captured_piece)
@@ -99,7 +99,7 @@ class Play
     if advantage.check?(opponent_pieces, user_king, all_pieces)
       messages.protect_king(player)
       
-      actions.move_piece(destination, origin, pieces)
+      actions.move_piece(destination, origin, all_pieces)
       actions.decrease_move_count(piece, player)
 
       pieces.all_symbols << captured_piece unless captured_piece.nil?

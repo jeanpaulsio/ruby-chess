@@ -1,7 +1,7 @@
 class BasicActions
-  def move_piece(origin, destination, pieces)
-    target = pieces.all_symbols.select { |piece| piece.data[:coordinates] == origin}
-    target[0].data[:coordinates] = destination
+  def move_piece(origin, destination, all_pieces)
+    target = all_pieces.select { |piece| piece[:coordinates] == origin}
+    target[0][:coordinates] = destination
   end
 
   def delete_piece(coord, pieces)
