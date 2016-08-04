@@ -42,25 +42,22 @@ class Play
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
       destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
+      check_empty_origin(origin, player, all_pieces) 
+      
       make_move(origin, destination, player)
       switch_players(player)
     end
   end
 
   def make_move(origin, destination, player)
-    piece                = actions.find_piece(origin, pieces)
-    origin_is_empty      = actions.empty_spot?(origin, all_pieces)
-    destination_is_empty = actions.empty_spot?(destination, all_pieces)
-
-    error_loop(player) if origin_is_empty
+    piece = actions.find_piece(origin, pieces)
 
     if piece.valid_move?(origin, destination, all_pieces) && 
        player.color == piece.data[:color]
       
-      if destination_is_empty
+      if actions.empty_spot?(destination, all_pieces)
         actions.move_piece(origin, destination, pieces)
-        actions.increase_move_count(piece, player)
-        
+        actions.increase_move_count(piece, player)  
         
         king_protection(origin, destination, piece, player)
         opponent_in_check?(player)
@@ -106,6 +103,13 @@ class Play
       actions.decrease_move_count(piece, player)
 
       pieces.all_symbols << captured_piece unless captured_piece.nil?
+      error_loop(player)
+    end
+  end
+
+  def check_empty_origin(origin, player, all_pieces)
+    if actions.empty_spot?(origin, all_pieces)
+      messages.empty_origin
       error_loop(player)
     end
   end

@@ -29,14 +29,14 @@ class GamePieces
 
     @black_symbols = [@black_rook1, @black_rook2, @black_knight1, @black_knight2,
                       @black_bishop1, @black_bishop2, @black_queen, @black_king,
-                      @black_pawn1, @black_pawn2, @black_pawn3, @black_pawn4,
-                      @black_pawn5, @black_pawn6, @black_pawn7, @black_pawn8
+                      #@black_pawn1, @black_pawn2, @black_pawn3, @black_pawn4,
+                      #@black_pawn5, @black_pawn6, @black_pawn7, @black_pawn8
                       ]
 
     @white_symbols = [@white_rook1, @white_rook2, @white_knight1, @white_knight2,
                       @white_bishop1, @white_bishop2, @white_queen, @white_king,
-                      @white_pawn1, @white_pawn2, @white_pawn3, @white_pawn4,
-                      @white_pawn5, @white_pawn6, @white_pawn7, @white_pawn8
+                      #@white_pawn1, @white_pawn2, @white_pawn3, @white_pawn4,
+                      #@white_pawn5, @white_pawn6, @white_pawn7, @white_pawn8
                       ]
 
     @all_symbols   = @black_symbols + @white_symbols

@@ -23,4 +23,8 @@ class Messages
   def check(player)
     puts player.color == "white" ? "(Black in Check)" : "(White in Check)"
   end
+
+  def empty_origin
+    puts "There's no piece there smh"
+  end
 end
