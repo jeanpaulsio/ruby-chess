@@ -7,7 +7,9 @@
 » Need to implement:
     - en passant
     - castling
-    - check/mate/stalemate
+    - check(finished)
+    - checkmate
+    - stalemate
 ```
 
 ## Instructions
@@ -16,13 +18,7 @@
 ║  ╠═╣║╣ ╚═╗╚═╗
 ╚═╝╩ ╩╚═╝╚═╝╚═╝
 » Welcome to Ruby Chess
-» Regular move examples: 
-    a2 to a4
-    d7 to d5
-» Special move examples: (TODO)
-    castle e8 c8 
-    en passant b5 c6 
-    promotion d7 d8 
+» Regular move examples: a2 to a4
 ```
 
 ## Game Board Screenshot

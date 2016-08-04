@@ -15,7 +15,7 @@ class Instructions
   end
 
   def display
-    #puts @title
+    puts @title
     puts @instructions
   end
 end
