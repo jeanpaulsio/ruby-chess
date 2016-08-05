@@ -92,6 +92,10 @@ class Play
     end
   end
 
+  def opponent_in_mate?(player)
+
+  end
+
   def king_protection(origin, destination, piece, player, captured_piece=nil)
     opponent_pieces    = opponent_pieces(player)
     user_king          = user_king(player)
@@ -128,10 +132,9 @@ class Play
     play_game(player)
   end
 
-  # ----- methods related to interface display ----- #
   def display_board
     #pause
-    #clear_screen
+    clear_screen
     fill_board
     #show_instructions
     print_board
@@ -163,7 +166,6 @@ class Play
     @game.reverse_board
   end
 
-  # ----- methods related to user pieces ----- #
   def all_pieces
     ans = @pieces.all_symbols.map{ |i| i.data }
   end
