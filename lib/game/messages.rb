@@ -3,28 +3,29 @@ class Messages
     puts "\n» #{player.color.capitalize}'s turn:"
   end
 
-	def capture(captured_piece)
-    puts "#{captured_piece.data[:color].capitalize}'s "\
-         "#{captured_piece.data[:name]} has been captured!"
+	def capture(captured_piece, player)
+    "\nYour #{captured_piece.data[:name].capitalize} was captured."
   end
 
   def friendly_fire
-    "\nNo Friendly Fire!"
+    "\nTraitor! No friendly fire, bud."
   end
 
   def protect_king(player)
-    "\n#{player.color.capitalize}, protect your King!"
+    "\n#{player.color.capitalize}, protect your Lord Commander!"
   end
 
   def error
-  	"\nYou played yourself."
+  	"\nYou know nothing, try again."
   end
 
-  def check(player)
-    puts player.color == "white" ? "(Black in Check)" : "(White in Check)"
+  def check(threat)
+    "\n#{threat.data[:color].capitalize} #{threat.data[:name].capitalize} "\
+    "wants the Command Line Throne."\
+    "\nMake move to escape Check."
   end
 
   def empty_origin
-    "\nThere's no piece there smh."
+    "\nWhat is dead may never die. No piece there."
   end
 end

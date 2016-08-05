@@ -9,7 +9,7 @@ require './lib/pieces/basic_actions'
 require './lib/pieces/special_moves'
 
 class Play
-  attr_reader :actions, :advantage, :messages, :pieces
+  attr_reader :actions, :advantage, :messages, :pieces, :current_msg
 
   def initialize
     @game         = Board.new
@@ -25,7 +25,6 @@ class Play
     @messages     = Messages.new
     @current_msg  = ""
 
-    show_instructions
     play_game(@player1)
   end
 
@@ -79,7 +78,7 @@ class Play
 
         king_protection(origin, destination, piece_in_hand, player, captured_piece)
 
-        messages.capture(captured_piece)
+        @current_msg = messages.capture(captured_piece, player)
         opponent_in_check?(player)
       end
     
@@ -98,7 +97,10 @@ class Play
     opponent_king = opponent_king(player)
 
     if advantage.check?(user_pieces, opponent_king, all_pieces)
-      messages.check(player)
+      threat = user_pieces.select{ |i| i.data[:check] == true }
+      threat = threat[0]
+
+      @current_msg += messages.check(threat)
     end
   end
 
@@ -149,7 +151,7 @@ class Play
   def display_board
     clear_screen
     fill_board
-    #show_instructions
+    show_instructions
     print_board
     reverse_board
   end
@@ -188,8 +190,8 @@ class Play
   end
 
   def user_king(player)
-    user_king          = actions.find_your_king(player, white_pieces, black_pieces)
-    user_king_location = user_king[:coordinates]
+    user_king = actions.find_your_king(player, white_pieces, black_pieces)
+    user_king = user_king[:coordinates]
   end
 
   def user_pieces(player)
@@ -197,8 +199,8 @@ class Play
   end
 
   def opponent_king(player)
-    opponent_king          = actions.find_opponent_king(player, white_pieces, black_pieces)
-    opponent_king_location = opponent_king[:coordinates]
+    opponent_king = actions.find_opponent_king(player, white_pieces, black_pieces)
+    opponent_king = opponent_king[:coordinates]
   end
 
   def opponent_pieces(player)

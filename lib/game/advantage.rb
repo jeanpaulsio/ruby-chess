@@ -3,22 +3,32 @@ class Advantage
     status = false
     player_pieces.each do |piece|
       origin = piece.data[:coordinates]
+      
       if piece.valid_move?(origin, destination, all_pieces)
         piece.data[:check] = true
-        puts "Check by: #{piece.data[:name].upcase}"
-        status = true
+        status             = true
       else
         piece.data[:check] = false
       end
-
-      #p piece if piece.data[:check]
     end
     status
   end
 
   def checkmate?(player_pieces, all_pieces)
+    status = false
+
     king_piece = player_pieces.select{ |i| i.data[:name] == "king" }
-    #p king_piece
+    coord = king_piece[0].data[:coordinates]
+
+    possible_king_moves = []
+
+    puts "#{king_piece[0].data[:color]} #{king_piece[0].data[:name]}"
+    puts "#{king_piece[0].data[:coordinates]}"
+    puts "checkmate: #{status}"
+
+
+
+    status
   end
 
   def stalemate?
@@ -27,6 +37,23 @@ end
 
 
 =begin 
+exclude if x == 0 || x == 9 || y == 0 || y == 9
+
+{x:4, y:0}
+{x:5, y:0}
+{x:6, y:0}
+
+{x:4, y:1}
+{x:5, y:1} ***
+{x:6, y:1}
+
+{x:4, y:2}
+{x:5, y:2}
+{x:6, y:2}
+
+
+
+
 
 is current player in checkmate? **CURRENT PLAYER** 
 
