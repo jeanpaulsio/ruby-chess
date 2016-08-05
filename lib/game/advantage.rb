@@ -11,14 +11,14 @@ class Advantage
         piece.data[:check] = false
       end
 
-      p piece if piece.data[:check]
+      #p piece if piece.data[:check]
     end
     status
   end
 
-  def checkmate?(player_pieces, destination, all_pieces)
-    status = false
-    status
+  def checkmate?(player_pieces, all_pieces)
+    king_piece = player_pieces.select{ |i| i.data[:name] == "king" }
+    #p king_piece
   end
 
   def stalemate?
@@ -27,6 +27,8 @@ end
 
 
 =begin 
+
+is current player in checkmate? **CURRENT PLAYER** 
 
 checkmate? implementations
 execute only if in check

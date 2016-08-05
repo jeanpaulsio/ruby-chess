@@ -68,14 +68,15 @@ describe Bishop do
   describe "#clear_positive_slope?" do
     context "when given values within square area" do
       let(:origin)      { {x:3, y:2} }
+      let(:destination) { {x:6, y:8} }
       let(:set1)        { [ { coordinates: {x:4, y:4} },
                             { coordinates: {x:6, y:2} } ] }
       let(:set2)        { [ { coordinates: {x:4, y:3} },
                             { coordinates: {x:6, y:2} } ] }
 
       it "returns true if clear path between origin and destination" do
-        with_set1 = bishop.clear_positive_slope?(origin, set1)
-        with_set2 = bishop.clear_positive_slope?(origin, set2)
+        with_set1 = bishop.clear_positive_slope?(origin, destination, set1)
+        with_set2 = bishop.clear_positive_slope?(origin, destination, set2)
         expect(with_set1).to be true
         expect(with_set2).to be false
       end
@@ -85,14 +86,15 @@ describe Bishop do
   describe "#clear_negative_slope?" do
     context "when given values within square area" do
       let(:origin)      { {x:3, y:5} }
+      let(:destination) { {x:7, y:1} }
       let(:set1)        { [ { coordinates: {x:3, y:3} },
                             { coordinates: {x:6, y:4} } ] }
       let(:set2)        { [ { coordinates: {x:4, y:3} },
                             { coordinates: {x:6, y:2} } ] }
 
       it "returns true if clear path between origin and destination" do
-        with_set1 = bishop.clear_negative_slope?(origin, set1)
-        with_set2 = bishop.clear_negative_slope?(origin, set2)
+        with_set1 = bishop.clear_negative_slope?(origin, destination, set1)
+        with_set2 = bishop.clear_negative_slope?(origin, destination, set2)
         expect(with_set1).to be true
         expect(with_set2).to be false
       end

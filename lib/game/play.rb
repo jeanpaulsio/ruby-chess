@@ -23,6 +23,7 @@ class Play
     
     @instructions = Instructions.new
     @messages     = Messages.new
+    @current_msg  = ""
 
     show_instructions
     play_game(@player1)
@@ -30,6 +31,10 @@ class Play
 
   def play_game(player)
     display_board
+    player_in_mate?(player)
+
+    display_message
+    reset_message
     messages.turn(player)
 
     answer      = player.take_turn
@@ -42,37 +47,37 @@ class Play
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
       destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
-      check_empty_origin(origin, player, all_pieces) 
-      
+      check_empty_origin(origin, player, all_pieces)
       make_move(origin, destination, player)
+      
       switch_players(player)
     end
   end
 
   def make_move(origin, destination, player)
-    piece = actions.find_piece(origin, pieces)
-
-    if piece.valid_move?(origin, destination, all_pieces) && 
-       player.color == piece.data[:color]
+    piece_in_hand = actions.find_piece(origin, pieces)
+    
+    if piece_in_hand.valid_move?(origin, destination, all_pieces) && 
+       player.color == piece_in_hand.data[:color]
       
       if actions.empty_spot?(destination, all_pieces)
         actions.move_piece(origin, destination, all_pieces)
-        actions.increase_move_count(piece, player)  
-        
-        king_protection(origin, destination, piece, player)
-        opponent_in_check?(player)
-      elsif actions.friendly_fire?(origin, destination, all_pieces)
-        messages.friendly_fire(player)
-        error_loop(player)
+        actions.increase_move_count(piece_in_hand, player)
 
+        king_protection(origin, destination, piece_in_hand, player)
+        opponent_in_check?(player)
+
+      elsif actions.friendly_fire?(origin, destination, all_pieces)
+        @current_msg = messages.friendly_fire
+        error_loop(player)
       elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = actions.find_piece(destination, pieces)
         actions.delete_piece(destination, pieces)
 
         actions.move_piece(origin, destination, all_pieces)
-        actions.increase_move_count(piece, player)
+        actions.increase_move_count(piece_in_hand, player)
 
-        king_protection(origin, destination, piece, player, captured_piece)
+        king_protection(origin, destination, piece_in_hand, player, captured_piece)
 
         messages.capture(captured_piece)
         opponent_in_check?(player)
@@ -81,6 +86,11 @@ class Play
     else
       error_loop(player)
     end
+  end
+
+  def player_in_mate?(player)
+    player_pieces = user_pieces(player)
+    advantage.checkmate?(player_pieces, all_pieces)
   end
 
   def opponent_in_check?(player)
@@ -92,19 +102,15 @@ class Play
     end
   end
 
-  def opponent_in_mate?(player)
-
-  end
-
-  def king_protection(origin, destination, piece, player, captured_piece=nil)
+  def king_protection(origin, destination, piece_in_hand, player, captured_piece=nil)
     opponent_pieces    = opponent_pieces(player)
     user_king          = user_king(player)
 
     if advantage.check?(opponent_pieces, user_king, all_pieces)
-      messages.protect_king(player)
+      @current_msg = messages.protect_king(player)
       
       actions.move_piece(destination, origin, all_pieces)
-      actions.decrease_move_count(piece, player)
+      actions.decrease_move_count(piece_in_hand, player)
 
       pieces.all_symbols << captured_piece unless captured_piece.nil?
       error_loop(player)
@@ -113,13 +119,13 @@ class Play
 
   def check_empty_origin(origin, player, all_pieces)
     if actions.empty_spot?(origin, all_pieces)
-      messages.empty_origin
+      @current_msg = messages.empty_origin
       error_loop(player)
     end
   end
 
   def error_loop(player)
-    messages.error(player)
+    @current_msg += messages.error
     play_game(player)
   end
 
@@ -132,17 +138,20 @@ class Play
     play_game(player)
   end
 
+  def display_message
+    puts @current_msg
+  end
+
+  def reset_message
+    @current_msg = ""
+  end
+
   def display_board
-    #pause
     clear_screen
     fill_board
     #show_instructions
     print_board
     reverse_board
-  end
-
-  def pause
-    sleep 1.5
   end
 
   def clear_screen

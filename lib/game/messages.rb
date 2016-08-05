@@ -8,16 +8,16 @@ class Messages
          "#{captured_piece.data[:name]} has been captured!"
   end
 
-  def friendly_fire(player)
-    puts "No Friendly Fire!"
+  def friendly_fire
+    "\nNo Friendly Fire!"
   end
 
   def protect_king(player)
-    puts "#{player.color.capitalize}, protect your King!"
+    "\n#{player.color.capitalize}, protect your King!"
   end
 
-  def error(player)
-  	puts "You played yourself."
+  def error
+  	"\nYou played yourself."
   end
 
   def check(player)
@@ -25,6 +25,6 @@ class Messages
   end
 
   def empty_origin
-    puts "There's no piece there smh"
+    "\nThere's no piece there smh."
   end
 end
