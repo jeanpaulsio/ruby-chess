@@ -31,9 +31,9 @@ class Play
   def play_game(player)
     display_board
     player_in_mate?(player)
+    player_in_check?(player)
 
     display_message
-    reset_message
     messages.turn(player)
 
     answer      = player.take_turn
@@ -46,7 +46,7 @@ class Play
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
       destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
-      check_empty_origin(origin, player, all_pieces)
+      error_loop(player) if check_empty_origin(origin, player, all_pieces)
       make_move(origin, destination, player)
       
       switch_players(player)
@@ -64,8 +64,6 @@ class Play
         actions.increase_move_count(piece_in_hand, player)
 
         king_protection(origin, destination, piece_in_hand, player)
-        opponent_in_check?(player)
-
       elsif actions.friendly_fire?(origin, destination, all_pieces)
         @current_msg = messages.friendly_fire
         error_loop(player)
@@ -79,7 +77,6 @@ class Play
         king_protection(origin, destination, piece_in_hand, player, captured_piece)
 
         @current_msg = messages.capture(captured_piece, player)
-        opponent_in_check?(player)
       end
     
     else
@@ -88,25 +85,32 @@ class Play
   end
 
   def player_in_mate?(player)
-    player_pieces = user_pieces(player)
-    advantage.checkmate?(player_pieces, all_pieces)
+    player_pieces   = user_pieces(player)
+    opponent_pieces = opponent_pieces(player)
+    
+    advantage.checkmate?(player_pieces, opponent_pieces, all_pieces)
   end
 
-  def opponent_in_check?(player)
-    user_pieces   = user_pieces(player)
-    opponent_king = opponent_king(player)
+  def player_in_check?(player)
+    status          = false
+    opponent_pieces = opponent_pieces(player)
+    user_pieces     = user_pieces(player)
+    user_king       = actions.find_your_king(player, white_pieces, black_pieces)
 
-    if advantage.check?(user_pieces, opponent_king, all_pieces)
-      threat = user_pieces.select{ |i| i.data[:check] == true }
+    if advantage.check?(opponent_pieces, user_king, all_pieces)
+      threat = opponent_pieces.select{ |i| i.data[:check] == true }
       threat = threat[0]
+      status = true
 
       @current_msg += messages.check(threat)
     end
+
+    status
   end
 
   def king_protection(origin, destination, piece_in_hand, player, captured_piece=nil)
-    opponent_pieces    = opponent_pieces(player)
-    user_king          = user_king(player)
+    opponent_pieces = opponent_pieces(player)
+    user_king       = actions.find_your_king(player, white_pieces, black_pieces)
 
     if advantage.check?(opponent_pieces, user_king, all_pieces)
       @current_msg = messages.protect_king(player)
@@ -115,13 +119,6 @@ class Play
       actions.decrease_move_count(piece_in_hand, player)
 
       pieces.all_symbols << captured_piece unless captured_piece.nil?
-      error_loop(player)
-    end
-  end
-
-  def check_empty_origin(origin, player, all_pieces)
-    if actions.empty_spot?(origin, all_pieces)
-      @current_msg = messages.empty_origin
       error_loop(player)
     end
   end
@@ -135,50 +132,17 @@ class Play
     answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
   end
 
-  def switch_players(player)
-    player = player == @player1 ? @player2 : @player1
-    play_game(player)
+  def check_empty_origin(origin, player, all_pieces)
+    @current_msg = messages.empty_origin if actions.empty_spot?(origin, all_pieces)
   end
 
   def display_message
     puts @current_msg
-  end
-
-  def reset_message
     @current_msg = ""
   end
 
-  def display_board
-    clear_screen
-    fill_board
-    show_instructions
-    print_board
-    reverse_board
-  end
-
-  def clear_screen
-    system 'clear' or system 'cls'
-  end
-
-  def fill_board
-    @game.fill_cells
-    @pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
-  end
-
-  def show_instructions
-    @instructions.display
-  end
-
-  def print_board
-    @game.print_board
-  end
-
-  def reverse_board
-    @game.reverse_board
-  end
-
   def all_pieces
-    ans = @pieces.all_symbols.map{ |i| i.data }
+    @pieces.all_symbols.map{ |i| i.data }
   end
 
   def black_pieces
@@ -189,22 +153,26 @@ class Play
     @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
   end
 
-  def user_king(player)
-    user_king = actions.find_your_king(player, white_pieces, black_pieces)
-    user_king = user_king[:coordinates]
-  end
-
   def user_pieces(player)
     player.color == "white" ? white_pieces : black_pieces
   end
 
-  def opponent_king(player)
-    opponent_king = actions.find_opponent_king(player, white_pieces, black_pieces)
-    opponent_king = opponent_king[:coordinates]
-  end
-
   def opponent_pieces(player)
     player.color == "black" ? white_pieces : black_pieces
+  end
+
+  def switch_players(player)
+    player = player == @player1 ? @player2 : @player1
+    play_game(player)
+  end
+
+  def display_board
+    system 'clear' or system 'cls'
+    @game.fill_cells
+    @pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
+    @instructions.display
+    @game.print_board
+    @game.reverse_board
   end
 end
 

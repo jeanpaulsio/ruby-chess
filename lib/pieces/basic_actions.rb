@@ -25,23 +25,13 @@ class BasicActions
     player.total_moves -= 1
   end
 
-  def find_opponent_king(player, white_pieces, black_pieces)
-    if player.color == "white"
-      king_piece = black_pieces.select{ |piece| piece.data[:name] == "king" }
-      return king_piece[0].data
-    else
-      king_piece = white_pieces.select{ |piece| piece.data[:name] == "king" }
-      return king_piece[0].data
-    end
-  end
-
   def find_your_king(player, white_pieces, black_pieces)
     if player.color == "black"
       king_piece = black_pieces.select{ |piece| piece.data[:name] == "king" }
-      return king_piece[0].data
+      return king_piece[0].data[:coordinates]
     else
       king_piece = white_pieces.select{ |piece| piece.data[:name] == "king" }
-      return king_piece[0].data
+      return king_piece[0].data[:coordinates]
     end
   end
 
