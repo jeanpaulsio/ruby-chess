@@ -69,8 +69,8 @@ class Play
         error_loop(player)
       elsif actions.capture_piece?(origin, destination, all_pieces)
         captured_piece = actions.find_piece(destination, pieces)
+        
         actions.delete_piece(destination, pieces)
-
         actions.move_piece(origin, destination, all_pieces)
         actions.increase_move_count(piece_in_hand, player)
 
@@ -85,17 +85,17 @@ class Play
   end
 
   def player_in_mate?(player)
-    player_pieces   = user_pieces(player)
-    opponent_pieces = opponent_pieces(player)
+    opponent_pieces = get_pieces_for(player, opponent=true)
+    user_pieces     = get_pieces_for(player)
     
-    advantage.checkmate?(player_pieces, opponent_pieces, all_pieces)
+    advantage.checkmate?(user_pieces, opponent_pieces, all_pieces)
   end
 
   def player_in_check?(player)
     status          = false
-    opponent_pieces = opponent_pieces(player)
-    user_pieces     = user_pieces(player)
-    user_king       = actions.find_your_king(player, white_pieces, black_pieces)
+    opponent_pieces = get_pieces_for(player, opponent=true)
+    user_pieces     = get_pieces_for(player, opponent=false)
+    user_king       = actions.find_king(player, all_pieces)
 
     if advantage.check?(opponent_pieces, user_king, all_pieces)
       threat = opponent_pieces.select{ |i| i.data[:check] == true }
@@ -109,8 +109,8 @@ class Play
   end
 
   def king_protection(origin, destination, piece_in_hand, player, captured_piece=nil)
-    opponent_pieces = opponent_pieces(player)
-    user_king       = actions.find_your_king(player, white_pieces, black_pieces)
+    opponent_pieces = get_pieces_for(player, opponent=true)
+    user_king       = actions.find_king(player, all_pieces)
 
     if advantage.check?(opponent_pieces, user_king, all_pieces)
       @current_msg = messages.protect_king(player)
@@ -153,12 +153,12 @@ class Play
     @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
   end
 
-  def user_pieces(player)
-    player.color == "white" ? white_pieces : black_pieces
-  end
-
-  def opponent_pieces(player)
-    player.color == "black" ? white_pieces : black_pieces
+  def get_pieces_for(player, opponent=false)
+    if (player.color == "white" && !opponent) || (player.color == "black" && opponent) 
+      white_pieces
+    elsif (player.color == "black" && !opponent) || (player.color == "white" && opponent)
+      black_pieces
+    end
   end
 
   def switch_players(player)

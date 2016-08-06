@@ -22,7 +22,7 @@
 ```
 
 ## Game Board Screenshot
-![alt tag](https://raw.githubusercontent.com/jeanpaulsio/ruby-exercises/master/11_chess/lib/game.jpg)
+![alt tag](https://raw.githubusercontent.com/jeanpaulsio/ruby-exercises/master/11_chess/img/game.jpg)
 
 ## Installation
 ```
