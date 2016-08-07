@@ -33,3 +33,10 @@
 $ gem install colorize
 ```
 * [Colorize gem](https://github.com/fazibear/colorize) used to color strings
+
+## Run Game
+To play game, run the following in your terminal from the root directory
+
+```
+$ ruby lib/game/play.rb
+```
