@@ -26,27 +26,4 @@ describe BasicActions do
     end
   end
 
-  describe "#capture_piece?" do
-    context "when player moves to oponent's square" do
-      let(:origin)      { {x:1, y:8} }
-      let(:destination) { {x:4, y:8} }
-      let(:pieces)      { [ { color: "white", coordinates: {x:1, y:8} },
-                            { color: "black", coordinates: {x:4, y:8} } ] }
-      it "captures opponents piece" do
-        expect(piece.capture_piece?(origin, destination, pieces)).to be true
-      end
-    end
-  end
-
-  describe "#friendly_fire?" do
-    context "when player moves to own square" do
-      let(:origin)      { {x:1, y:8} }
-      let(:destination) { {x:4, y:8} }
-      let(:pieces)      { [ { color: "white", coordinates: {x:1, y:8} },
-                            { color: "white", coordinates: {x:4, y:8} } ] }
-      it "returns true" do
-        expect(piece.friendly_fire?(origin, destination, pieces)).to be true
-      end
-    end
-  end
 end

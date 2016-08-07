@@ -1,5 +1,14 @@
 class Advantage
+  attr_accessor :kings_unsafe_moves, :threats_to_king
+
+  def initialize
+    @kings_unsafe_moves = []
+    @threats_to_king    = []
+  end
+
   def check?(opponent_pieces, user_king_location, all_pieces)
+    # user_king_location takes a hash {x: , y: }
+    
     status = false
 
     opponent_pieces.each do |piece|
@@ -13,35 +22,63 @@ class Advantage
         piece.data[:check] = false
       end
     end
+
     status
   end
 
   def checkmate?(user_pieces, opponent_pieces, all_pieces)
-    status = false
 
-    move_king_safely?(user_pieces, opponent_pieces, all_pieces)
-    
-    
-    
+    puts "can evade king w/o eating opponent?"
+    puts king_evade?(user_pieces, opponent_pieces, all_pieces)
 
-    #1. checkmate? is false if: #move_king_safely?
-    #2. checkmate? is false if: #beat_threat?
-    #3. checkmate? is false if: #block_threat?
+    find_potential_threats(opponent_pieces, all_pieces)
+
+    #1. checkmate? is false if: #king_evade?    is true
+    #2. checkmate? is false if: #beat_threat?   is true
+    #3. checkmate? is false if: #block_threat?  is true
     #4. else checkmate? is true
-    
-    status
+
   end
 
-  def move_king_safely?(user_pieces, opponent_pieces, all_pieces)
+  def king_evade?(user_pieces, opponent_pieces, all_pieces)
     king_piece       = user_pieces.select{ |i| i.data[:name] == "king" }
     king_piece       = king_piece[0]
+    
     valid_king_moves = find_king_moves(king_piece, user_pieces)
+    king_origin      = king_piece.data[:coordinates]
 
-    puts "your king is at #{king_piece.data[:coordinates]}"
+    valid_king_moves.each do |king_coord|
+      target = all_pieces.select{ |piece| piece[:coordinates] == king_origin }
+      target[0][:coordinates] = king_coord 
+      
+      if check?(opponent_pieces, king_coord, all_pieces)
+        @kings_unsafe_moves << king_coord
+      end
 
-    valid_king_moves.each do |coord|
-      puts coord
+      target[0][:coordinates] = king_origin
     end
+
+    (valid_king_moves - @kings_unsafe_moves).length > 0
+  end
+
+  def find_potential_threats(opponent_pieces, all_pieces)
+    opponent_pieces.each do |piece|
+      origin = piece.data[:coordinates]
+
+      kings_unsafe_moves.each do |coord|
+        @threats_to_king << piece if piece.valid_move?(origin, coord, all_pieces)
+      end
+
+    end
+    #p threats_to_king
+  end
+
+  def kings_unsafe_moves
+    @kings_unsafe_moves.uniq
+  end
+
+  def threats_to_king
+    @threats_to_king.uniq
   end
 
   def find_king_moves(king_piece, user_pieces)
@@ -69,6 +106,7 @@ class Advantage
 
 
 
+# ---------------------------------
 
 =begin
   def checkmate?(player_pieces, opponent_pieces, all_pieces)

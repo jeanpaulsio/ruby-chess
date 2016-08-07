@@ -30,56 +30,56 @@ class Play
 
   def play_game(player)
     display_board
-    end_game if player_in_mate?(player)
+    player_in_mate?(player)
     player_in_check?(player)
 
     display_message(player)
 
     answer      = player.take_turn
     parsed_ans  = scan_answer(answer)
-    
+  
     if parsed_ans.empty?
+      @current_msg = messages.invalid_input
       error_loop(player)
     else
       user_input  = parsed_ans[0][0].split("")
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
       destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
-      error_loop(player) if check_empty_origin(origin, player, all_pieces)
-      make_move(origin, destination, player)
-      
-      switch_players(player)
+      game_loop(origin, destination, player)
     end
   end
 
   def make_move(origin, destination, player)
-    piece_in_hand = actions.find_piece(origin, gamepieces)
-    
+    piece_in_hand  = actions.find_piece(origin, gamepieces)
+    target_piece   = actions.find_piece(destination, gamepieces)
+    target_empty   = target_piece.nil?
+
+
     if piece_in_hand.valid_move?(origin, destination, all_pieces) && 
-       player.color == piece_in_hand.data[:color]
+       player.color == piece_in_hand.data[:color] &&
+       (target_empty || player.color != target_piece.data[:color])
       
-      if actions.empty_spot?(destination, all_pieces)
-        actions.move_piece(origin, destination, all_pieces)
-        actions.increase_move_count(piece_in_hand, player)
+      actions.delete_piece(destination, gamepieces)
+      actions.move_piece(origin, destination, all_pieces)
+      actions.increase_move_count(piece_in_hand, player)
 
-        king_protection(origin, destination, piece_in_hand, player)
-      elsif actions.friendly_fire?(origin, destination, all_pieces)
-        @current_msg = messages.friendly_fire
-        error_loop(player)
-      elsif actions.capture_piece?(origin, destination, all_pieces)
-        captured_piece = actions.find_piece(destination, gamepieces)
-        
-        actions.delete_piece(destination, gamepieces)
-        actions.move_piece(origin, destination, all_pieces)
-        actions.increase_move_count(piece_in_hand, player)
-
-        king_protection(origin, destination, piece_in_hand, player, captured_piece)
-
-        @current_msg = messages.capture(captured_piece, player)
-      end
-    
     else
       error_loop(player)
+    end
+
+    finalize_move(origin, destination, player, piece_in_hand, target_piece)
+  end
+
+  def finalize_move(origin, destination, player, piece_in_hand, target_piece)
+    if player_in_check?(player)
+      actions.move_piece(destination, origin, all_pieces)
+      actions.decrease_move_count(piece_in_hand, player)
+      @gamepieces.all_symbols << target_piece unless target_piece.nil?
+      reset_current_message
+      error_loop(player)
+    else
+      @current_msg = messages.capture(target_piece, player) unless target_piece.nil?
     end
   end
 
@@ -103,47 +103,27 @@ class Play
 
       @current_msg += messages.check(threat)
     end
-
     status
   end
 
-  def king_protection(origin, destination, piece_in_hand, player, captured_piece=nil)
+  def protect_king(origin, destination, player)
     opponent_pieces = get_pieces_for(player, opponent=true)
-    user_king       = actions.find_king(player, all_pieces)
-
-    if advantage.check?(opponent_pieces, user_king, all_pieces)
-      @current_msg = messages.protect_king(player)
-      
-      actions.move_piece(destination, origin, all_pieces)
-      actions.decrease_move_count(piece_in_hand, player)
-
-      gamepieces.all_symbols << captured_piece unless captured_piece.nil?
-      error_loop(player)
-    end
-  end
-
-  def end_game
-    puts messages.game_over
-    exit
-  end
-
-  def error_loop(player)
-    @current_msg += messages.error
-    play_game(player)
-  end
-
-  def scan_answer(answer)
-    answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
-  end
-
-  def check_empty_origin(origin, player, all_pieces)
-    @current_msg = messages.empty_origin if actions.empty_spot?(origin, all_pieces)
+    piece_in_hand   = all_pieces.select { |piece| piece[:coordinates] == origin}
+    (advantage.kings_unsafe_moves.include?(destination) && piece_in_hand[0][:name] == "king")
   end
 
   def display_message(player)
     puts @current_msg
     puts messages.turn(player)
+    reset_current_message
+  end
+
+  def reset_current_message
     @current_msg = ""
+  end
+
+  def scan_answer(answer)
+    answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
   end
 
   def all_pieces
@@ -171,11 +151,36 @@ class Play
     play_game(player)
   end
 
+  def game_loop(origin, destination, player)
+    if actions.empty_spot?(origin, all_pieces)
+      @current_msg = messages.empty_origin
+      error_loop(player)
+    elsif protect_king(origin, destination, player)
+      @current_msg = messages.protect_king(player)
+      error_loop(player)
+    else
+      make_move(origin, destination, player)
+      advantage.kings_unsafe_moves = []
+      advantage.threats_to_king    = []
+      switch_players(player)
+    end
+  end
+
+  def error_loop(player)
+    @current_msg += messages.error
+    play_game(player)
+  end
+
+  def end_game
+    puts messages.game_over
+    exit
+  end
+
   def display_board
     system "clear" or system "cls"
     @game.fill_cells
     @gamepieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
-    @instructions.display
+    #@instructions.display
     @game.print_board
     @game.reverse_board
   end

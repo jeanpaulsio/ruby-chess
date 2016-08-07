@@ -8,25 +8,25 @@ class Messages
   end
 
 	def capture(captured_piece, player)
-    "\nYour #{captured_piece.data[:name].capitalize} was captured."
-  end
-
-  def friendly_fire
-    "\nTraitor! No friendly fire, bud."
+    "\nYour #{captured_piece.data[:name].capitalize} was captured.\n"
   end
 
   def protect_king(player)
     "\n#{player.color.capitalize}, protect your Lord Commander!"
   end
 
-  def error
-  	"\nYou know nothing, try again."
-  end
-
   def check(threat)
-    "\n#{threat.data[:color].capitalize} #{threat.data[:name].capitalize} "\
+    "\nThe #{threat.data[:color].capitalize} #{threat.data[:name].capitalize} "\
     "wants the Command Line Throne."\
     "\nMake move to escape Check."
+  end
+
+  def error
+    "\nYou know nothing, try again.\n"
+  end
+
+  def invalid_input
+    "\nFilthy Crow! Try this format: `d2 d3`"
   end
 
   def empty_origin
