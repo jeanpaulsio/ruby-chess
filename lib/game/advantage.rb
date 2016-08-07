@@ -1,6 +1,7 @@
 class Advantage
   attr_accessor :kings_unsafe_moves, 
-                :potential_threats, :current_threats, :threat_attackers,
+                :potential_threats, :current_threats, 
+                :threat_attackers, :threat_blockers,
                 :actions
 
   def initialize
@@ -8,6 +9,7 @@ class Advantage
     @potential_threats   = []
     @current_threats     = []
     @threat_attackers    = []
+    @threat_blockers     = []
 
     @actions             = BasicActions.new
   end
@@ -36,21 +38,25 @@ class Advantage
     find_current_threats(user_pieces, opponent_pieces, all_pieces)
 
     puts "can king evade ?"
-    puts king_evade?(user_pieces, opponent_pieces, all_pieces)
+    evade = king_evade?(user_pieces, opponent_pieces, all_pieces)
+    puts evade
     find_potential_threats(opponent_pieces, all_pieces)
 
     puts "can user beat threat?"
-    puts beat_threat?(user_pieces, opponent_pieces, all_pieces)
+    beat = beat_threat?(user_pieces, opponent_pieces, all_pieces)
+    puts beat
 
     puts "can user block threat? w/o dying"
-    puts block_threat?(user_pieces, opponent_pieces, all_pieces)
+    block = block_threat?(user_pieces, opponent_pieces, all_pieces)
+    puts block
 
-    
-    #1. checkmate? is false if: #king_evade?    is true     -> finished
-    #2. checkmate? is false if: #beat_threat?   is true     -> finished
-    #3. checkmate? is false if: #block_threat?  is true
-    #4. else checkmate? is true
+    status = evade || beat || block
+    status = !status
+    puts "checkmate is #{status}"
+  end
 
+  def stalemate?
+    # stalemate? is true if player cannot move without being in check
   end
 
   def king_evade?(user_pieces, opponent_pieces, all_pieces)
@@ -76,28 +82,38 @@ class Advantage
       true
     elsif @current_threats.size == 1
      find_threat_attackers(user_pieces, all_pieces)
-     status = true
      safely_capture = []
+     unsafe_capture = []
+     status         = true
 
      @threat_attackers.each do |piece|
-        origin      = piece.data[:coordinates]
         destination = @current_threats[0].data[:coordinates]
-        @current_threats[0].data[:coordinates] = {x:0,y:0}
-        
+        origin      = piece.data[:coordinates]
         king_origin = find_king(user_pieces)
+
+
+        @current_threats[0].data[:coordinates] = { x:0, y:0 }
         
         actions.move_piece(origin, destination, all_pieces)
-        unless check?(opponent_pieces ,king_origin, all_pieces)
+
+        king_origin = piece.data[:name] == "king" ? destination : king_origin
+
+        if check?(opponent_pieces ,king_origin, all_pieces)
+          unsafe_capture << piece
+        else
           safely_capture << piece
         end
 
         actions.move_piece(destination, origin, all_pieces)
         @current_threats[0].data[:coordinates] = destination
       end
-
-      status = safely_capture == [] ? false : status
+  
+      status = safely_capture.empty? ? false : true
       status
     elsif @current_threats.size > 1
+      # if multiple pieces have king in check
+      #    king must move out of the way
+  
       king_origin = find_king(user_pieces)
       king_piece  = user_pieces.select{ |i| i.data[:name] == "king" }
       king_piece  = king_piece[0]
@@ -105,7 +121,7 @@ class Advantage
 
       @current_threats.each do |threat|
         destination = threat.data[:coordinates]
-        threat.data[:coordinates] = {x:0,y:0}
+        threat.data[:coordinates] = { x:0, y:0 }
 
         if king_piece.valid_move?(king_origin, destination)
           actions.move_piece(king_origin, destination, all_pieces)
@@ -122,10 +138,9 @@ class Advantage
   end
 
   def block_threat?(user_pieces, opponent_pieces, all_pieces)
-    status = true
     if @current_threats.empty?
       status = true
-    elsif !@current_threats.empty?
+    else
       current_threat_coord = @current_threats[0].data[:coordinates]
       current_threat_name  = @current_threats[0].data[:name]
       user_king_location   = find_king(user_pieces)
@@ -134,36 +149,18 @@ class Advantage
       user_pieces = user_pieces.select{|piece| piece.data[:name] != "king" }
 
       potential_threat_blockers = []
-      check_status = []
+      status = true
+
       return status = false if current_threat_name == "pawn"   || 
                                current_threat_name == "knight" ||
                                current_threat_name == "king"
         
       path_to_king = find_slope_path(x1, x2, y1, y2)
-      
-      path_to_king.each do |coord|
-        user_pieces.each do |piece|
 
-          origin      = piece.data[:coordinates]
-          destination = coord
-     
-          if piece.valid_move?(origin, destination, all_pieces)
-            actions.move_piece(origin, destination, all_pieces)
-            
-            potential_threat_blockers << piece
-            if check?(opponent_pieces, user_king_location, all_pieces) == false
-              return status = true
-            end
-            
-            actions.move_piece(destination, origin, all_pieces)      
-          end
-        end 
-      end
-
+      find_threat_blockers(user_pieces, path_to_king, all_pieces)
+      block_threat_safely?(opponent_pieces, user_king_location, all_pieces)
     end
-    
-    p potential_threat_blockers
-    puts status
+
   end
 
   def find_slope_path(x1, x2, y1, y2)
@@ -222,6 +219,34 @@ class Advantage
     end
   end
 
+  def find_threat_blockers(user_pieces, threat_path, all_pieces)
+    user_pieces.each do |piece|
+      origin = piece.data[:coordinates]
+      
+      threat_path.each do |coord|
+        if piece.valid_move?(origin, coord, all_pieces)
+          @threat_blockers << { origin: piece.data[:coordinates],
+                                destination: coord }
+        end
+      end
+    end
+  end
+
+  def block_threat_safely?(opponent_pieces, user_king_location, all_pieces)
+    safety = @threat_blockers.all? do |path_coords|
+      destination = path_coords[:destination]
+      origin      = path_coords[:origin]
+      
+      actions.move_piece(origin, destination, all_pieces)
+      status = check?(opponent_pieces, user_king_location, all_pieces)
+      actions.move_piece(destination, origin, all_pieces)
+
+      status
+    end
+
+    safety == false ? true : false
+  end
+
   def empty_king_moves(king_origin, user_pieces, opponent_pieces)
     x, y = king_origin[:x], king_origin[:y]
 
@@ -257,9 +282,5 @@ class Advantage
     king_piece  = user_pieces.select{ |i| i.data[:name] == "king" }
     king_piece  = king_piece[0]
     king_origin = king_piece.data[:coordinates]
-  end
-
-  def stalemate?
-    # stalemate? is true if player cannot move without being in check
   end
 end

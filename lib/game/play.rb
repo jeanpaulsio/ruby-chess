@@ -55,7 +55,6 @@ class Play
     target_piece   = actions.find_piece(destination, gamepieces)
     target_empty   = target_piece.nil?
 
-
     if piece_in_hand.valid_move?(origin, destination, all_pieces) && 
        player.color == piece_in_hand.data[:color] &&
        (target_empty || player.color != target_piece.data[:color])
@@ -63,11 +62,9 @@ class Play
       actions.delete_piece(destination, gamepieces)
       actions.move_piece(origin, destination, all_pieces)
       actions.increase_move_count(piece_in_hand, player)
-
     else
       error_loop(player)
     end
-
     finalize_move(origin, destination, player, piece_in_hand, target_piece)
   end
 
@@ -88,11 +85,6 @@ class Play
     user_pieces     = get_pieces_for(player)
     
     advantage.checkmate?(user_pieces, opponent_pieces, all_pieces)
-
-    #puts "unsafe king moves: #{advantage.kings_unsafe_moves}"
-    #puts "potential_threats: #{advantage.potential_threats}"
-    #puts "current threats: #{advantage.current_threats}"
-    #puts "threat attackers: #{advantage.threat_attackers}"
   end
 
   def player_in_check?(player)
@@ -175,6 +167,7 @@ class Play
     advantage.potential_threats  = []
     advantage.current_threats    = []
     advantage.threat_attackers   = []
+    advantage.threat_blockers    = []
   end
 
   def error_loop(player)
