@@ -9,16 +9,16 @@ class King
   end
 
   def valid_move?(origin, destination, all_pieces=[])
-    y2, y1 = destination[:y], origin[:y]
-    x2, x1 = destination[:x], origin[:x]
+    x, y   = origin[:x], origin[:y]
+    status = false
+    possible_king_moves = [
+      {x:x-1, y:y-1}, {x:x, y:y-1}, {x:x+1, y:y-1},
+      {x:x-1, y:y  }, {x:x+1, y:y},
+      {x:x-1, y:y+1}, {x:x, y:y+1}, {x:x+1, y:y+1}
+    ]
 
-    ( (y2 - y1 == -1) && (x2 - x1 == -1) ) ||
-    ( (y2 - y1 ==  0) && (x2 - x1 == -1) ) ||
-    ( (y2 - y1 ==  1) && (x2 - x1 == -1) ) ||
-    ( (y2 - y1 == -1) && (x2 - x1 ==  0) ) ||
-    ( (y2 - y1 ==  1) && (x2 - x1 ==  0) ) ||
-    ( (y2 - y1 == -1) && (x2 - x1 ==  1) ) ||
-    ( (y2 - y1 ==  0) && (x2 - x1 ==  1) ) ||
-    ( (y2 - y1 ==  1) && (x2 - x1 ==  1) )
+    status = true if possible_king_moves.include? destination
+
+    return status
   end
 end

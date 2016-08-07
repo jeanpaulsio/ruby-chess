@@ -16,10 +16,11 @@ class Advantage
 
   def checkmate?(user_pieces, opponent_pieces, all_pieces)
     king_piece       = user_pieces.select{ |i| i.data[:name] == "king" }
+    king_piece       = king_piece[0]
     valid_king_moves = find_king_moves(king_piece)
 
-
-    p valid_king_moves
+    #p user_pieces
+    #p valid_king_moves
 
     #1. checkmate? is false if king can move safely
     #2. checkmate? is false if threat can be eaten safely
@@ -28,7 +29,7 @@ class Advantage
   end
 
   def find_king_moves(king_piece)
-    x, y = king_piece[0].data[:coordinates][:x], king_piece[0].data[:coordinates][:y]
+    x, y = king_piece.data[:coordinates][:x], king_piece.data[:coordinates][:y]
 
     possible_king_moves = [
       {x:x-1, y:y-1}, {x:x, y:y-1}, {x:x+1, y:y-1},

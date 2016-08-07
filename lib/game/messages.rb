@@ -1,6 +1,10 @@
 class Messages
+  def blank
+    ""
+  end
+
 	def turn(player)
-    puts "\n» #{player.color.capitalize}'s turn:"
+    "\n» #{player.color.capitalize}'s turn:"
   end
 
 	def capture(captured_piece, player)

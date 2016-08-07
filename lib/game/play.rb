@@ -9,12 +9,12 @@ require './lib/pieces/basic_actions'
 require './lib/pieces/special_moves'
 
 class Play
-  attr_reader :actions, :advantage, :messages, :pieces, :current_msg
+  attr_reader :actions, :advantage, :messages, :gamepieces, :current_msg
 
   def initialize
     @game         = Board.new
   
-    @pieces       = GamePieces.new
+    @gamepieces   = GamePieces.new
     @player1      = Player.new("white")
     @player2      = Player.new("black")
     
@@ -23,7 +23,7 @@ class Play
     
     @instructions = Instructions.new
     @messages     = Messages.new
-    @current_msg  = ""
+    @current_msg  = messages.blank
 
     play_game(@player1)
   end
@@ -33,8 +33,7 @@ class Play
     player_in_mate?(player)
     player_in_check?(player)
 
-    display_message
-    messages.turn(player)
+    display_message(player)
 
     answer      = player.take_turn
     parsed_ans  = scan_answer(answer)
@@ -42,7 +41,7 @@ class Play
     if parsed_ans.empty?
       error_loop(player)
     else
-      user_input  = parsed_ans[0][0].split('')
+      user_input  = parsed_ans[0][0].split("")
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
       destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
@@ -54,7 +53,7 @@ class Play
   end
 
   def make_move(origin, destination, player)
-    piece_in_hand = actions.find_piece(origin, pieces)
+    piece_in_hand = actions.find_piece(origin, gamepieces)
     
     if piece_in_hand.valid_move?(origin, destination, all_pieces) && 
        player.color == piece_in_hand.data[:color]
@@ -68,9 +67,9 @@ class Play
         @current_msg = messages.friendly_fire
         error_loop(player)
       elsif actions.capture_piece?(origin, destination, all_pieces)
-        captured_piece = actions.find_piece(destination, pieces)
+        captured_piece = actions.find_piece(destination, gamepieces)
         
-        actions.delete_piece(destination, pieces)
+        actions.delete_piece(destination, gamepieces)
         actions.move_piece(origin, destination, all_pieces)
         actions.increase_move_count(piece_in_hand, player)
 
@@ -118,7 +117,7 @@ class Play
       actions.move_piece(destination, origin, all_pieces)
       actions.decrease_move_count(piece_in_hand, player)
 
-      pieces.all_symbols << captured_piece unless captured_piece.nil?
+      gamepieces.all_symbols << captured_piece unless captured_piece.nil?
       error_loop(player)
     end
   end
@@ -136,21 +135,22 @@ class Play
     @current_msg = messages.empty_origin if actions.empty_spot?(origin, all_pieces)
   end
 
-  def display_message
+  def display_message(player)
     puts @current_msg
+    puts messages.turn(player)
     @current_msg = ""
   end
 
   def all_pieces
-    @pieces.all_symbols.map{ |i| i.data }
+    @gamepieces.all_symbols.map{ |i| i.data }
   end
 
   def black_pieces
-    @pieces.all_symbols.select{ |i| i.data[:color] == "black" }
+    @gamepieces.all_symbols.select{ |i| i.data[:color] == "black" }
   end
 
   def white_pieces
-    @pieces.all_symbols.select{ |i| i.data[:color] == "white" }
+    @gamepieces.all_symbols.select{ |i| i.data[:color] == "white" }
   end
 
   def get_pieces_for(player, opponent=false)
@@ -167,9 +167,9 @@ class Play
   end
 
   def display_board
-    system 'clear' or system 'cls'
+    system "clear" or system "cls"
     @game.fill_cells
-    @pieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
+    @gamepieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
     @instructions.display
     @game.print_board
     @game.reverse_board
