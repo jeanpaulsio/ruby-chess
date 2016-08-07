@@ -89,9 +89,9 @@ class Play
     
     advantage.checkmate?(user_pieces, opponent_pieces, all_pieces)
 
-    puts "unsafe king moves: #{advantage.kings_unsafe_moves}"
-    puts "potential_threats: #{advantage.potential_threats}"
-    puts "current threats: #{advantage.current_threats}"
+    #puts "unsafe king moves: #{advantage.kings_unsafe_moves}"
+    #puts "potential_threats: #{advantage.potential_threats}"
+    #puts "current threats: #{advantage.current_threats}"
     #puts "threat attackers: #{advantage.threat_attackers}"
   end
 

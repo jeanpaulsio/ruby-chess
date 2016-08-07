@@ -44,9 +44,9 @@ class GamePieces
     # ---- test
     #@white_queen = Queen.new(6,8, "white")
     #@white_rook2 = Rook.new(8,6, "white")
-    #@white_rook1 = Rook.new(8,1, "white")
+    @white_rook1 = Rook.new(8,8, "white")
     #@black_queen = Queen.new(1, 2, "black")
     #@black_king = King.new(8, 8, "black")
-    @all_symbols = [@black_king, @black_queen, @white_queen, @white_king, @white_rook1, @white_rook2, @black_rook1]
+    @all_symbols = [ @black_king, @black_queen, @white_queen, @white_king, @white_rook1, @white_rook2, @black_rook1]
   end
 end
