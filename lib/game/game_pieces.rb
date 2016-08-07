@@ -42,6 +42,7 @@ class GamePieces
     @all_symbols   = @black_symbols + @white_symbols
 
 =begin CHECKMATE TESTS
+http://chess.about.com/od/tipsforbeginners/ss/BasicCheckmates.htm#step1
     # ---- Checkmate with Two Major Pieces (Rook and Queen) 
     # a6 a8
     @all_symbols = [
@@ -158,7 +159,7 @@ class GamePieces
       Pawn.new(7,7,"black"),
       Rook.new(6,8,"black")
     ]
-=end
+#=end
 #=begin
     # ---- Morphy's Mate
     # e7 f6
@@ -170,6 +171,6 @@ class GamePieces
       Pawn.new(8,7,"black"),
       Pawn.new(6,7,"black"),
     ]
-#=end
+=end
   end
 end

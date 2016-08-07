@@ -9,7 +9,7 @@ require './lib/pieces/basic_actions'
 require './lib/pieces/special_moves'
 
 class Play
-  attr_reader :actions, :advantage, :messages, :gamepieces, :current_msg
+  attr_reader :actions, :advantage, :messages, :gamepieces, :current_msg, :special
 
   def initialize
     @game         = Board.new
@@ -18,6 +18,7 @@ class Play
     @player1      = Player.new("white")
     @player2      = Player.new("black")
     
+    @special      = SpecialMoves.new
     @actions      = BasicActions.new
     @advantage    = Advantage.new
     
@@ -30,7 +31,7 @@ class Play
 
   def play_game(player)
     display_board
-    player_in_mate?(player)
+    end_game if player_in_mate?(player)
     player_in_check?(player)
 
     display_message(player)
@@ -62,6 +63,8 @@ class Play
       actions.delete_piece(destination, gamepieces)
       actions.move_piece(origin, destination, all_pieces)
       actions.increase_move_count(piece_in_hand, player)
+
+      special.en_passant_status(piece_in_hand, origin, destination, player)
     else
       error_loop(player)
     end
@@ -78,6 +81,16 @@ class Play
     else
       @current_msg = messages.capture(target_piece, player) unless target_piece.nil?
     end
+  end
+
+  # TO DO
+  def en_passant?(player)
+    opponent_pieces = get_pieces_for(player, opponent=true)
+    opponent_count  = 0
+    opponent_pieces.each { |piece| opponent_count += piece.data[:move_count] }
+    user_count      = player.total_moves
+
+    piece_in_enpassant = opponent_pieces.select { |piece| piece if piece.data[:enpassant] }
   end
 
   def player_in_mate?(player)
@@ -185,7 +198,7 @@ class Play
     system "clear" or system "cls"
     @game.fill_cells
     @gamepieces.all_symbols.each { |piece| @game.set_piece_coordinates(piece.data) }
-    #@instructions.display
+    @instructions.display
     @game.print_board
     @game.reverse_board
   end

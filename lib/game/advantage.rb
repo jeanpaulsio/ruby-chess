@@ -34,25 +34,16 @@ class Advantage
   end
 
   def checkmate?(user_pieces, opponent_pieces, all_pieces)
-    
     find_current_threats(user_pieces, opponent_pieces, all_pieces)
-
-    puts "can king evade ?"
     evade = king_evade?(user_pieces, opponent_pieces, all_pieces)
-    puts evade
+
     find_potential_threats(opponent_pieces, all_pieces)
 
-    puts "can user beat threat?"
-    beat = beat_threat?(user_pieces, opponent_pieces, all_pieces)
-    puts beat
-
-    puts "can user block threat? w/o dying"
+    beat  = beat_threat?(user_pieces, opponent_pieces, all_pieces)
     block = block_threat?(user_pieces, opponent_pieces, all_pieces)
-    puts block
 
     status = evade || beat || block
     status = !status
-    puts "checkmate is #{status}"
   end
 
   def stalemate?

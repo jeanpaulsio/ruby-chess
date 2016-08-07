@@ -1,5 +1,5 @@
 class Pawn
-  attr_reader :data
+  attr_accessor :data
   
   def initialize(x, y, color)
     symbol = color == "white" ? "  ♙   " : "  ♟   "

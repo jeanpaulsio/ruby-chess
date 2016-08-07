@@ -7,7 +7,6 @@
 » Need to implement:
     - en passant
     - castling
-    - checkmate
     - stalemate
     - save/load game
 ```
