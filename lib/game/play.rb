@@ -88,13 +88,18 @@ class Play
     user_pieces     = get_pieces_for(player)
     
     advantage.checkmate?(user_pieces, opponent_pieces, all_pieces)
+
+    puts "unsafe king moves: #{advantage.kings_unsafe_moves}"
+    puts "potential_threats: #{advantage.potential_threats}"
+    puts "current threats: #{advantage.current_threats}"
+    #puts "threat attackers: #{advantage.threat_attackers}"
   end
 
   def player_in_check?(player)
     status          = false
     opponent_pieces = get_pieces_for(player, opponent=true)
     user_pieces     = get_pieces_for(player, opponent=false)
-    user_king       = actions.find_king(player, all_pieces)
+    user_king       = advantage.find_king(user_pieces)
 
     if advantage.check?(opponent_pieces, user_king, all_pieces)
       threat = opponent_pieces.select{ |i| i.data[:check] == true }
@@ -160,13 +165,20 @@ class Play
       error_loop(player)
     else
       make_move(origin, destination, player)
-      advantage.kings_unsafe_moves = []
-      advantage.threats_to_king    = []
+      reset_advantage_arrays
       switch_players(player)
     end
   end
 
+  def reset_advantage_arrays
+    advantage.kings_unsafe_moves = []
+    advantage.potential_threats  = []
+    advantage.current_threats    = []
+    advantage.threat_attackers   = []
+  end
+
   def error_loop(player)
+    reset_advantage_arrays
     @current_msg += messages.error
     play_game(player)
   end

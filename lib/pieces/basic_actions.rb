@@ -25,11 +25,6 @@ class BasicActions
     player.total_moves -= 1
   end
 
-  def find_king(player, all_pieces)
-    king_piece = all_pieces.select{ |i| i[:color] == player.color && i[:name] == "king" }
-    king_piece[0][:coordinates]
-  end
-
   def empty_spot?(spot, all_pieces)
     target = all_pieces.select { |piece| piece[:coordinates] == spot }
     target.empty? ? true : false
