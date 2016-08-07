@@ -1,9 +1,11 @@
 class Advantage
-  def check?(player_pieces, destination, all_pieces)
+  def check?(opponent_pieces, user_king_location, all_pieces)
     status = false
-    player_pieces.each do |piece|
-      origin = piece.data[:coordinates]
-      
+
+    opponent_pieces.each do |piece|
+      origin      = piece.data[:coordinates]
+      destination = user_king_location
+
       if piece.valid_move?(origin, destination, all_pieces)
         piece.data[:check] = true
         status             = true
@@ -15,20 +17,34 @@ class Advantage
   end
 
   def checkmate?(user_pieces, opponent_pieces, all_pieces)
-    king_piece       = user_pieces.select{ |i| i.data[:name] == "king" }
-    king_piece       = king_piece[0]
-    valid_king_moves = find_king_moves(king_piece)
+    status = false
 
-    #p user_pieces
-    #p valid_king_moves
+    move_king_safely?(user_pieces, opponent_pieces, all_pieces)
+    
+    
+    
 
-    #1. checkmate? is false if king can move safely
-    #2. checkmate? is false if threat can be eaten safely
-    #3. checkmate? is false if threat can be blocked safely
+    #1. checkmate? is false if: #move_king_safely?
+    #2. checkmate? is false if: #beat_threat?
+    #3. checkmate? is false if: #block_threat?
     #4. else checkmate? is true
+    
+    status
   end
 
-  def find_king_moves(king_piece)
+  def move_king_safely?(user_pieces, opponent_pieces, all_pieces)
+    king_piece       = user_pieces.select{ |i| i.data[:name] == "king" }
+    king_piece       = king_piece[0]
+    valid_king_moves = find_king_moves(king_piece, user_pieces)
+
+    puts "your king is at #{king_piece.data[:coordinates]}"
+
+    valid_king_moves.each do |coord|
+      puts coord
+    end
+  end
+
+  def find_king_moves(king_piece, user_pieces)
     x, y = king_piece.data[:coordinates][:x], king_piece.data[:coordinates][:y]
 
     possible_king_moves = [
@@ -39,9 +55,13 @@ class Advantage
 
     valid_king_moves = 
       possible_king_moves.select do |coord|
-        ( (1..8).include? coord[:x] ) && ( (1..8).include? coord[:y] )
+        ( (1..8).include? coord[:x] ) && 
+        ( (1..8).include? coord[:y] )
       end
 
+    user_piece_coords = user_pieces.map{ |i| i.data[:coordinates] }
+    valid_king_moves.delete_if{ |coord| user_piece_coords.include? coord }
+    
     return valid_king_moves
   end
 
@@ -52,13 +72,6 @@ class Advantage
 
 =begin
   def checkmate?(player_pieces, opponent_pieces, all_pieces)
-
-    king_piece = player_pieces.select{ |i| i.data[:name] == "king" }
-    valid_king_moves = find_king_moves(king_piece)
-
-    king_piece_coord = king_piece[0].data[:coordinates]
-    
-
     
     # ----- find threat to the king; see if you can capture it.
     threat = opponent_pieces.select{ |i| i.data[:check] == true }
@@ -126,22 +139,21 @@ class Advantage
     #puts "your king moves: #{valid_king_moves.join(", ")}"
     #puts "checkmate: #{status}"
 
-    #status
   end
 =end
 
 
   def stalemate?
+    # stalemate? is true if player cannot move without being in check
   end
 end
 
 
 =begin 
 
-is current player in checkmate? **CURRENT PLAYER** 
+is current player in checkmate?
+execute at start of every turn
 
-checkmate? implementations
-execute only if in check
 1. if single check (one threat)
   ***can threat be captured? w/o still being in check if not, then....
     - threat = destination

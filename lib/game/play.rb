@@ -30,7 +30,7 @@ class Play
 
   def play_game(player)
     display_board
-    player_in_mate?(player)
+    end_game if player_in_mate?(player)
     player_in_check?(player)
 
     display_message(player)
@@ -120,6 +120,11 @@ class Play
       gamepieces.all_symbols << captured_piece unless captured_piece.nil?
       error_loop(player)
     end
+  end
+
+  def end_game
+    puts messages.game_over
+    exit
   end
 
   def error_loop(player)

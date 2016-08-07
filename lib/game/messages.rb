@@ -32,4 +32,9 @@ class Messages
   def empty_origin
     "\nWhat is dead may never die. No piece there."
   end
+
+  def game_over
+    "\nThe mad King has been defeated."\
+    "\nCheckmate!"
+  end
 end
