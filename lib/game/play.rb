@@ -47,7 +47,7 @@ class Play
 
     if parsed_ans[0].include? " castle"
       opponent_pieces = get_pieces_for(player, opponent=true)
-      
+
       if player_in_check?(player)
         @current_msg = messages.invalid_castle_check
         error_loop(player)
@@ -57,11 +57,11 @@ class Play
       end
       reset_advantage_arrays
       switch_players(player)
-    elsif parsed_ans[0].include? " promote"
+    #elsif parsed_ans[0].include? " promote"
+    #  special.promote_pawn?(origin, destination, opponent_pieces, all_pieces)
 
-
-      reset_advantage_arrays
-      switch_players(player)
+    #  reset_advantage_arrays
+    #  switch_players(player)
     else
       game_loop(origin, destination, player)
     end

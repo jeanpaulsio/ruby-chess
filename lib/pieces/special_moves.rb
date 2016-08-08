@@ -22,10 +22,9 @@ class SpecialMoves
 		}
 	end
 
-	def promote_pawn?(origin, destination, all_pieces)
-		
+	def promote_pawn?(origin, destination, opponent_pieces, all_pieces)
+		# TODO
 	end
-
 
 	def valid_castle?(origin, destination, opponent_pieces, all_pieces)
 		castle_path = [origin, destination]
