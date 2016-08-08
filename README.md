@@ -6,7 +6,6 @@
 ```
 » Need to implement:
     - en passant
-    - castling
     - stalemate
     - save/load game
 ```
@@ -20,8 +19,22 @@
 ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝██║         ╚██████╗██║  ██║███████╗███████║███████║
  ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝ ╚═╝          ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 
-» When you play the Game of Chess, you win or die. Or Stalemate.      
-» Regular move example: a2 a4
+» When you play the Game of Chess, you win or die.      
+```
+
+## Special Moves
+###Castling
+Castling is a move where the King and the Rook make a move simultaneously. The following conditions must be met:
+* The King has not yet moved in the game
+* The Rook involved has not yet moved in the game
+* The King is not in check
+* The castling move does not put the King in check
+
+```ruby
+e1 g1 castle    # white kingside
+e8 g8 castle    # black kingside
+e1 c1 castle    # white queenside
+e8 c8 castle    # black queenside
 ```
 
 ## Game Board Screenshot

@@ -39,26 +39,26 @@ class Play
 
     answer      = player.take_turn
     parsed_ans  = scan_answer(answer)
-  
-    if parsed_ans.empty?
-      @current_msg = messages.invalid_input
-      error_loop(player)
-    #elsif parsed_ans[0].include? " castle"
-    #  user_input  = parsed_ans[0][0].split("")
-    #  origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
-    #  destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
+    invalid_input?(parsed_ans, player)
 
-    #  error_loop(player) if player_in_check?(player) || 
-    #    !special.valid_castle?(origin, destination, all_pieces)
-      
-    #  special.castle(origin, destination, all_pieces)
+    user_input  = parsed_ans[0][0].split("")
+    origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
+    destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
+
+    if parsed_ans[0].include? " castle"
+      if player_in_check?(player)
+        @current_msg = messages.invalid_castle_check
+        error_loop(player)
+      elsif !special.valid_castle?(origin, destination, all_pieces)
+        @current_msg = messages.invalid_castle_normal
+        error_loop(player)
+      end
+      reset_advantage_arrays
+      switch_players(player)
     else
-      user_input  = parsed_ans[0][0].split("")
-      origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
-      destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
-
       game_loop(origin, destination, player)
     end
+
   end
 
   def make_move(origin, destination, player)
@@ -134,6 +134,13 @@ class Play
   def scan_answer(answer)
     #answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
     answer.scan(/^([a-h][1-8]\s[a-h][1-8])(\scastle)?(\sen passant)?(\spromote)?/)
+  end
+
+  def invalid_input?(parsed_ans, player)
+    if parsed_ans.empty?
+      @current_msg = messages.invalid_input
+      error_loop(player)
+    end
   end
 
   def all_pieces

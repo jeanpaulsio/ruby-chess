@@ -13,8 +13,11 @@ class Instructions
     eos
     
     @instructions = <<~eos
-      » When you play the Game of Chess, you win or die. Or Stalemate.      
-      » Regular move example: a2 a4
+      » When you play the Game of Chess, you win or die.      
+      » Regular move example: 
+        a2 a4
+      » Special move examples: 
+        e1 g1 castle
       eos
   end
 

@@ -25,6 +25,14 @@ class Messages
     "\nYou know nothing, try again.\n"
   end
 
+  def invalid_castle_normal
+    "\nNo castle for you."
+  end
+
+  def invalid_castle_check
+    "\nNo castling under siege."
+  end
+
   def invalid_input
     "\nFilthy Crow! Try this format: `d2 d3`"
   end
