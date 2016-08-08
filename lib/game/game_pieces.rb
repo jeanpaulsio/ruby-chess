@@ -41,10 +41,6 @@ class GamePieces
 
     @all_symbols   = @black_symbols + @white_symbols
 
-    w_pawn1 = Pawn.new(3, 7, "white")
-    @all_symbols = [b_rook2, b_rook1, w_rook2, w_rook1, 
-                    b_king, w_king, w_queen, w_pawn1,]
-
 =begin CHECKMATE TESTS
 http://chess.about.com/od/tipsforbeginners/ss/BasicCheckmates.htm#step1
     # ---- Checkmate with Two Major Pieces (Rook and Queen) 

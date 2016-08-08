@@ -57,11 +57,6 @@ class Play
       end
       reset_advantage_arrays
       switch_players(player)
-    #elsif parsed_ans[0].include? " promote"
-    #  special.promote_pawn?(origin, destination, opponent_pieces, all_pieces)
-
-    #  reset_advantage_arrays
-    #  switch_players(player)
     else
       game_loop(origin, destination, player)
     end
@@ -139,7 +134,6 @@ class Play
   end
 
   def scan_answer(answer)
-    #answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
     answer.scan(/^([a-h][1-8]\s[a-h][1-8])(\scastle)?(\sen passant)?(\spromote)?/)
   end
 
