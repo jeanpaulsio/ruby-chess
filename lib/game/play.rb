@@ -9,7 +9,8 @@ require './lib/pieces/basic_actions'
 require './lib/pieces/special_moves'
 
 class Play
-  attr_reader :actions, :advantage, :messages, :gamepieces, :current_msg, :special
+  attr_reader :actions, :advantage, :current_msg,
+              :gamepieces, :messages, :special
 
   def initialize
     @game         = Board.new
@@ -42,6 +43,15 @@ class Play
     if parsed_ans.empty?
       @current_msg = messages.invalid_input
       error_loop(player)
+    #elsif parsed_ans[0].include? " castle"
+    #  user_input  = parsed_ans[0][0].split("")
+    #  origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
+    #  destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
+
+    #  error_loop(player) if player_in_check?(player) || 
+    #    !special.valid_castle?(origin, destination, all_pieces)
+      
+    #  special.castle(origin, destination, all_pieces)
     else
       user_input  = parsed_ans[0][0].split("")
       origin      = { x: user_input[0].ord  - 96, y: user_input[1].to_i }
@@ -64,7 +74,6 @@ class Play
       actions.move_piece(origin, destination, all_pieces)
       actions.increase_move_count(piece_in_hand, player)
 
-      special.en_passant_status(piece_in_hand, origin, destination, player)
     else
       error_loop(player)
     end
@@ -81,16 +90,6 @@ class Play
     else
       @current_msg = messages.capture(target_piece, player) unless target_piece.nil?
     end
-  end
-
-  # TO DO
-  def en_passant?(player)
-    opponent_pieces = get_pieces_for(player, opponent=true)
-    opponent_count  = 0
-    opponent_pieces.each { |piece| opponent_count += piece.data[:move_count] }
-    user_count      = player.total_moves
-
-    piece_in_enpassant = opponent_pieces.select { |piece| piece if piece.data[:enpassant] }
   end
 
   def player_in_mate?(player)
@@ -133,7 +132,8 @@ class Play
   end
 
   def scan_answer(answer)
-    answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
+    #answer.scan(/^([a-h][1-8]\s[a-h][1-8])$/)
+    answer.scan(/^([a-h][1-8]\s[a-h][1-8])(\scastle)?(\sen passant)?(\spromote)?/)
   end
 
   def all_pieces

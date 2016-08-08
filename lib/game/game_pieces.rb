@@ -40,6 +40,7 @@ class GamePieces
                       ]
 
     @all_symbols   = @black_symbols + @white_symbols
+    #@all_symbols = [b_rook2, b_rook1, w_rook2, w_rook1, b_king, w_king, w_queen]
 
 =begin CHECKMATE TESTS
 http://chess.about.com/od/tipsforbeginners/ss/BasicCheckmates.htm#step1
