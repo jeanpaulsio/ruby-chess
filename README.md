@@ -39,7 +39,7 @@ e8 c8 castle    # black queenside
 ```
 
 ## Game Board Screenshot
-![alt tag](https://raw.githubusercontent.com/jeanpaulsio/ruby-exercises/master/11_chess/img/game.jpg)
+![alt tag](https://cloud.githubusercontent.com/assets/8096483/17498914/15e144c8-5d7f-11e6-9b8d-e8b69c201231.jpg)
 
 ## Installation
 ```
