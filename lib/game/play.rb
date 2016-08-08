@@ -46,13 +46,20 @@ class Play
     destination = { x: user_input[-2].ord - 96, y: user_input[-1].to_i }
 
     if parsed_ans[0].include? " castle"
+      opponent_pieces = get_pieces_for(player, opponent=true)
+      
       if player_in_check?(player)
         @current_msg = messages.invalid_castle_check
         error_loop(player)
-      elsif !special.valid_castle?(origin, destination, all_pieces)
+      elsif !special.valid_castle?(origin, destination, opponent_pieces, all_pieces)
         @current_msg = messages.invalid_castle_normal
         error_loop(player)
       end
+      reset_advantage_arrays
+      switch_players(player)
+    elsif parsed_ans[0].include? " promote"
+
+
       reset_advantage_arrays
       switch_players(player)
     else

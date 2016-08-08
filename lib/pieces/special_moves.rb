@@ -22,8 +22,12 @@ class SpecialMoves
 		}
 	end
 
+	def promote_pawn?(origin, destination, all_pieces)
+		
+	end
 
-	def valid_castle?(origin, destination, all_pieces)
+
+	def valid_castle?(origin, destination, opponent_pieces, all_pieces)
 		castle_path = [origin, destination]
 		king_path   = @king_moves.select { |i, move| move == castle_path }
 		return false if king_path.empty?
@@ -38,6 +42,7 @@ class SpecialMoves
 		move_count  = (king_piece[0][:move_count] == 0) && (rook_piece[0][:move_count] == 0)
 		
 		return false if !move_count
+		return false if advantage.check?(opponent_pieces, king_destination, all_pieces)
 
 		if king_path.keys[0] == :a || king_path.keys[0] == :b
 			return false unless actions.empty_spot?({x:6, y:king_origin[:y]}, all_pieces) &&
@@ -47,7 +52,7 @@ class SpecialMoves
 													actions.empty_spot?({x:3, y:king_origin[:y]}, all_pieces) &&
 													actions.empty_spot?({x:4, y:king_origin[:y]}, all_pieces)
 		end
-
+		
 		actions.move_piece(king_origin, king_destination, all_pieces)
 		actions.move_piece(rook_origin, rook_destination, all_pieces)
 	end

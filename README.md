@@ -7,6 +7,7 @@
 » Need to implement:
     - en passant
     - stalemate
+    - pawn promotion
     - save/load game
 ```
 
